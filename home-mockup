@@ -1,0 +1,255 @@
+import React, { useState } from ‘react’;
+import { Home, Star, ShoppingBag, User, MapPin, Bell } from ‘lucide-react’;
+
+const KavaHubHome = () => {
+const [cartCount] = useState(0);
+const [selectedCategory, setSelectedCategory] = useState(0);
+
+const categories = [
+‘All’,
+‘Kava Cocktails’,
+‘Botanical Teas’,
+‘Kava Shots’,
+‘Coffee & Lattes’,
+‘Elixirs’
+];
+
+const products = [
+{
+name: ‘Sunset Serenity’,
+category: ‘Kava Cocktails’,
+price: ‘$12.00’,
+image: ‘🥥’,
+color: ‘#A67B5B’
+},
+{
+name: ‘Island Dreams’,
+category: ‘Kava Cocktails’,
+price: ‘$14.00’,
+image: ‘🌺’,
+color: ‘#8B7355’
+}
+];
+
+return (
+<div className="flex flex-col h-screen bg-background">
+{/* Status Bar - iOS Style */}
+<div className="flex justify-between items-center px-6 pt-3 pb-2 text-primary">
+<span className="text-base font-semibold tracking-tight">9:41</span>
+<div className="flex items-center gap-1.5">
+<div className="w-4 h-3 flex gap-0.5">
+<span className="w-1 h-2 bg-primary rounded-sm opacity-40"></span>
+<span className="w-1 h-2.5 bg-primary rounded-sm opacity-60"></span>
+<span className="w-1 h-3 bg-primary rounded-sm opacity-80"></span>
+<span className="w-1 h-3 bg-primary rounded-sm"></span>
+</div>
+<span className="text-xs">5G</span>
+<div className="w-6 h-3 border border-primary rounded-sm p-0.5">
+<div className="w-full h-full bg-primary rounded-sm"></div>
+</div>
+</div>
+</div>
+
+```
+  {/* Header */}
+  <div className="px-6 pt-2 pb-4">
+    <div className="flex items-start justify-between mb-1">
+      <div>
+        <p className="text-sm text-secondary mb-0.5">Good evening</p>
+        <h1 className="text-3xl font-bold text-primary tracking-tight">Welcome back, Alex</h1>
+      </div>
+      <button className="p-2.5 bg-surface rounded-full mt-1">
+        <Bell size={20} className="text-primary" />
+      </button>
+    </div>
+  </div>
+
+  {/* Main Scrollable Content */}
+  <div className="flex-1 overflow-y-auto pb-20">
+    {/* Rewards Card */}
+    <div className="mx-6 mb-6">
+      <div className="bg-gradient-to-br from-accent to-accent-dark rounded-2xl p-5 shadow-premium">
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h3 className="text-white font-semibold text-lg mb-1">Community Points</h3>
+            <p className="text-white/80 text-sm">Your journey to rewards</p>
+          </div>
+          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur">
+            <Star size={20} className="text-white" fill="white" />
+          </div>
+        </div>
+        
+        <div className="mb-4">
+          <div className="flex justify-between text-white text-sm mb-2">
+            <span className="font-medium">750 points</span>
+            <span className="text-white/70">1,000</span>
+          </div>
+          <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+            <div className="h-full w-3/4 bg-white rounded-full transition-all duration-700 ease-out"></div>
+          </div>
+        </div>
+        
+        <button className="w-full bg-white/95 backdrop-blur text-accent-dark py-3.5 rounded-xl font-semibold text-sm tracking-wide hover:bg-white transition-all duration-200">
+          View All Rewards
+        </button>
+      </div>
+    </div>
+
+    {/* Categories */}
+    <div className="px-6 mb-6">
+      <div className="flex gap-2.5 overflow-x-auto no-scrollbar">
+        {categories.map((category, index) => (
+          <button
+            key={index}
+            onClick={() => setSelectedCategory(index)}
+            className={`px-5 py-2.5 rounded-full font-medium text-sm whitespace-nowrap transition-all duration-200 ${
+              selectedCategory === index
+                ? 'bg-primary text-white shadow-sm'
+                : 'bg-surface text-secondary hover:bg-surface-hover'
+            }`}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    {/* Products Grid */}
+    <div className="px-6 mb-6">
+      <h2 className="text-lg font-semibold text-primary mb-4">Popular Now</h2>
+      <div className="grid grid-cols-2 gap-4">
+        {products.map((product, index) => (
+          <div key={index} className="bg-surface rounded-2xl overflow-hidden shadow-soft">
+            <div 
+              className="h-32 flex items-center justify-center text-5xl"
+              style={{ backgroundColor: product.color + '20' }}
+            >
+              {product.image}
+            </div>
+            <div className="p-4">
+              <p className="text-xs text-secondary mb-1">{product.category}</p>
+              <h4 className="font-semibold text-primary text-sm mb-2">{product.name}</h4>
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-primary">{product.price}</span>
+                <button className="w-8 h-8 bg-primary rounded-full flex items-center justify-center shadow-sm hover:scale-105 transition-transform">
+                  <ShoppingBag size={14} className="text-white" />
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Community Event Banner */}
+    <div className="px-6 mb-6">
+      <div className="bg-gradient-to-r from-terracotta to-terracotta-dark rounded-2xl p-6 shadow-premium">
+        <div className="flex justify-between items-center">
+          <div className="flex-1">
+            <p className="text-white/90 text-xs font-medium uppercase tracking-wider mb-1">Thursday Nights</p>
+            <h3 className="text-white text-xl font-bold mb-2">Open Mic Night</h3>
+            <p className="text-white/80 text-sm mb-4">Join our community for an evening of connection</p>
+            <button className="bg-white text-terracotta-dark px-5 py-2.5 rounded-xl font-semibold text-sm hover:scale-105 transition-transform">
+              Learn More
+            </button>
+          </div>
+          <div className="text-6xl opacity-50">🎤</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* Bottom Tab Bar */}
+  <div className="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-100">
+    <div className="flex justify-around items-center py-2 px-2">
+      <button className="flex flex-col items-center gap-1 py-2 px-3 rounded-lg">
+        <Home size={24} className="text-accent" fill="currentColor" strokeWidth={0} />
+        <span className="text-xs font-medium text-accent">Home</span>
+      </button>
+      
+      <button className="flex flex-col items-center gap-1 py-2 px-3 rounded-lg">
+        <Star size={24} className="text-gray-400" strokeWidth={2} />
+        <span className="text-xs text-gray-400">Rewards</span>
+      </button>
+      
+      <button className="flex flex-col items-center gap-1 py-2 px-3 rounded-lg relative">
+        <ShoppingBag size={24} className="text-gray-400" strokeWidth={2} />
+        {cartCount > 0 && (
+          <div className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-terracotta rounded-full flex items-center justify-center">
+            <span className="text-white text-xs font-bold">{cartCount}</span>
+          </div>
+        )}
+        <span className="text-xs text-gray-400">Cart</span>
+      </button>
+      
+      <button className="flex flex-col items-center gap-1 py-2 px-3 rounded-lg">
+        <User size={24} className="text-gray-400" strokeWidth={2} />
+        <span className="text-xs text-gray-400">Profile</span>
+      </button>
+    </div>
+  </div>
+
+  <style jsx>{`
+    .bg-background { background: #FAFAF8; }
+    .bg-surface { background: #FFFFFF; }
+    .bg-surface-hover { background: #F5F5F3; }
+    
+    .text-primary { color: #1C1C1E; }
+    .text-secondary { color: #8E8E93; }
+    
+    .bg-accent { background: #6B7F47; }
+    .bg-accent-dark { background: #5A6B3B; }
+    .text-accent { color: #6B7F47; }
+    .text-accent-dark { color: #5A6B3B; }
+    
+    .bg-terracotta { background: #B8654B; }
+    .bg-terracotta-dark { background: #A05940; }
+    .text-terracotta-dark { color: #A05940; }
+    
+    .bg-gradient-to-br {
+      background: linear-gradient(135deg, #6B7F47 0%, #5A6B3B 100%);
+    }
+    
+    .bg-gradient-to-r {
+      background: linear-gradient(90deg, #B8654B 0%, #A05940 100%);
+    }
+    
+    .shadow-premium {
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08), 0 2px 10px rgba(0,0,0,0.04);
+    }
+    
+    .shadow-soft {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.02);
+    }
+    
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .backdrop-blur {
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    
+    .backdrop-blur-xl {
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  `}</style>
+</div>
+```
+
+);
+};
+
+export default KavaHubHome;
