@@ -25,8 +25,9 @@ import {
   TouchableOpacity,
   TextInput,
   StyleSheet,
-  SafeAreaView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import { colors, spacing, borderRadius, typography, shadows } from '../theme';
 
@@ -413,19 +414,23 @@ const CartScreen = () => {
               - Always visible while scrolling
               - Full-width button with premium shadow
               - Accent color background for clear call-to-action
-              - Border top to separate from content
+              - Gradient background for smooth fade effect (matches mockup)
 
               Design Strategy:
               - Absolute positioning keeps it fixed
-              - Background color matches screen to create floating effect
+              - Gradient from transparent to background creates floating effect
               - Premium shadow adds depth and importance
               - In production, this would navigate to checkout flow
               ======================================== */}
-          <View style={styles.checkoutContainer}>
+          <LinearGradient
+            colors={['rgba(250, 250, 248, 0)', colors.background, colors.background]}
+            locations={[0, 0.3, 1]}
+            style={styles.checkoutContainer}
+          >
             <TouchableOpacity style={styles.checkoutButton}>
               <Text style={styles.checkoutButtonText}>Continue to Checkout</Text>
             </TouchableOpacity>
-          </View>
+          </LinearGradient>
         </>
       )}
     </SafeAreaView>
@@ -512,7 +517,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50, // Perfect circle
-    backgroundColor: `${colors.accent}15`, // 15% opacity for soft tint
+    backgroundColor: `${colors.accent}1A`, // 10% opacity for soft tint (matches mockup)
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.lg,
@@ -560,7 +565,7 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: borderRadius.xl, // Rounded container
-    backgroundColor: `${colors.accent}15`, // Soft sage green tint
+    backgroundColor: `${colors.accent}1A`, // 10% opacity sage green tint (matches mockup)
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -597,7 +602,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   modificationTag: {
-    backgroundColor: `${colors.accent}15`, // Soft sage green background
+    backgroundColor: `${colors.accent}1A`, // 10% opacity sage green background (matches mockup)
     paddingHorizontal: spacing.sm,
     paddingVertical: 2,
     borderRadius: borderRadius.round, // Pill-shaped tags
@@ -726,15 +731,13 @@ const styles = StyleSheet.create({
      ============================================ */
   checkoutContainer: {
     position: 'absolute', // Positioned absolutely for sticky effect
-    bottom: 0,
+    bottom: 80, // 80px from bottom (matches mockup bottom-20 = 80px)
     left: 0,
     right: 0,
     paddingHorizontal: spacing.xl,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.xl,
-    backgroundColor: colors.background, // Matches screen background
-    borderTopWidth: 1,
-    borderTopColor: colors.gray200, // Subtle separator
+    paddingBottom: spacing.lg,
+    // Gradient background applied via LinearGradient component (matches mockup)
+    // Fades from transparent to background color for smooth visual integration
   },
   checkoutButton: {
     backgroundColor: colors.accent, // Sage green for primary action

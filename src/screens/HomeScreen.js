@@ -23,10 +23,10 @@ import {
   StyleSheet,
   Dimensions,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather, Ionicons } from '@expo/vector-icons'; // Icon libraries for UI elements
 import { LinearGradient } from 'expo-linear-gradient'; // For smooth gradient backgrounds
 import theme from '../theme'; // Centralized design system with colors, typography, shadows
-import StatusBar from '../components/StatusBar'; // Custom iOS-style status bar component
 
 // Get device width for responsive layout calculations (used for product card sizing)
 const { width } = Dimensions.get('window');
@@ -36,10 +36,8 @@ const HomeScreen = () => {
    * STATE MANAGEMENT
    *
    * We use minimal state to keep the component lightweight and performant:
-   * - cartCount: Tracks items in cart for badge display (currently static at 0)
    * - selectedCategory: Tracks which category filter is active (0 = 'All')
    */
-  const [cartCount] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState(0);
 
   /**
@@ -112,18 +110,7 @@ const HomeScreen = () => {
   const rewardsProgress = 0.75; // 75% (750/1000)
 
   return (
-    <View style={styles.container}>
-      {/**
-       * STATUS BAR (iOS Style)
-       *
-       * Custom status bar component that matches iOS design patterns.
-       * Mockup shows: time (9:41), signal strength, 5G indicator, battery level.
-       * This component should render those elements with proper styling.
-       *
-       * Design: Clean, minimal, using primary text color for readability
-       */}
-      <StatusBar />
-
+    <SafeAreaView style={styles.container} edges={['top']}>
       {/**
        * HEADER SECTION
        *
@@ -381,77 +368,7 @@ const HomeScreen = () => {
           </LinearGradient>
         </View>
       </ScrollView>
-
-      {/**
-       * BOTTOM TAB BAR NAVIGATION
-       *
-       * Primary navigation component with 4 tabs.
-       * Matches mockup specifications exactly:
-       * - Home (active - filled icon, accent color)
-       * - Rewards (inactive - outline icon, gray)
-       * - Cart (inactive - with conditional badge for item count)
-       * - Profile (inactive - outline icon, gray)
-       *
-       * Layout:
-       * - position: 'absolute' - Fixed to bottom of screen, doesn't scroll
-       * - bottom: 0 - Anchored to screen bottom
-       * - Full width (left: 0, right: 0)
-       * - Overlays content, hence paddingBottom in ScrollView
-       *
-       * Design choices:
-       * - Translucent white background (rgba 0.95) with subtle backdrop blur effect
-       * - Creates floating, layered appearance above content
-       * - Top border (1px, gray-200) provides gentle separation
-       * - Icons use Ionicons for consistency (home, star, person)
-       * - Shopping bag uses Feather for specific icon style
-       * - Active tab uses accent color (sage green) to match brand
-       * - Inactive tabs use gray-400 for de-emphasis
-       * - Labels are extra small but readable
-       * - Active label gets medium font weight for emphasis
-       * - Cart badge (when count > 0):
-       *   - Positioned absolutely in top-right of icon
-       *   - Terracotta background (attention-grabbing warm color)
-       *   - White text for contrast
-       *   - Circular shape (20px diameter)
-       *   - Bold text for legibility at small size
-       * - Even spacing using justify-around
-       * - Adequate padding for comfortable tap targets (48px minimum)
-       *
-       * Accessibility: Icon + label combination aids comprehension
-       */}
-      <View style={styles.tabBar}>
-        {/* Home Tab - Active */}
-        <TouchableOpacity style={styles.tabItem}>
-          <Ionicons name="home" size={24} color={theme.colors.accent} />
-          <Text style={[styles.tabLabel, styles.tabLabelActive]}>Home</Text>
-        </TouchableOpacity>
-
-        {/* Rewards Tab */}
-        <TouchableOpacity style={styles.tabItem}>
-          <Ionicons name="star-outline" size={24} color={theme.colors.gray400} />
-          <Text style={styles.tabLabel}>Rewards</Text>
-        </TouchableOpacity>
-
-        {/* Cart Tab - with conditional badge */}
-        <TouchableOpacity style={styles.tabItem}>
-          <View>
-            <Feather name="shopping-bag" size={24} color={theme.colors.gray400} />
-            {cartCount > 0 && (
-              <View style={styles.cartBadge}>
-                <Text style={styles.cartBadgeText}>{cartCount}</Text>
-              </View>
-            )}
-          </View>
-          <Text style={styles.tabLabel}>Cart</Text>
-        </TouchableOpacity>
-
-        {/* Profile Tab */}
-        <TouchableOpacity style={styles.tabItem}>
-          <Ionicons name="person-outline" size={24} color={theme.colors.gray400} />
-          <Text style={styles.tabLabel}>Profile</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -752,59 +669,6 @@ const styles = StyleSheet.create({
     fontSize: 64, // Large decorative element
     opacity: 0.5, // Semi-transparent so it doesn't compete with text
     marginLeft: 16,
-  },
-
-  /**
-   * TAB BAR STYLES
-   *
-   * Fixed bottom navigation with 4 tabs
-   */
-  tabBar: {
-    position: 'absolute', // Fixed to bottom, overlays scrollable content
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.95)', // Nearly opaque white with slight transparency
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.gray200, // Subtle top border for separation
-    flexDirection: 'row',
-    justifyContent: 'space-around', // Even distribution of tabs
-    alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 8,
-    // Note: iOS would add safe area padding; Android needs paddingBottom for gesture bar
-  },
-  tabItem: {
-    alignItems: 'center', // Centers icon and label vertically
-    paddingVertical: 8,
-    paddingHorizontal: 12, // Creates comfortable tap target
-    borderRadius: theme.borderRadius.sm,
-    position: 'relative', // Allows absolute positioning of badge
-  },
-  tabLabel: {
-    fontSize: theme.typography.xs,
-    color: theme.colors.gray400, // Gray for inactive tabs
-    marginTop: 4, // Space between icon and label
-  },
-  tabLabelActive: {
-    color: theme.colors.accent, // Sage green for active tab
-    fontWeight: '500', // Medium weight for emphasis
-  },
-  cartBadge: {
-    position: 'absolute', // Overlays cart icon
-    top: -4, // Positioned in top-right corner
-    right: -4,
-    width: 20,
-    height: 20,
-    backgroundColor: theme.colors.terracotta, // Warm orange-red for attention
-    borderRadius: 10, // Circle
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  cartBadgeText: {
-    fontSize: 10, // Small but readable
-    fontWeight: 'bold',
-    color: '#FFFFFF',
   },
 });
 

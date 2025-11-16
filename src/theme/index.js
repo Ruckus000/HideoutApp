@@ -29,6 +29,7 @@ const lightTheme = {
     accent: colors.primary.main,
     accentDark: colors.primary.dark,
     terracotta: colors.accent.main,
+    terracottaDark: colors.accent.dark,
     white: '#FFFFFF',
     whiteTransparent10: colors.transparent.white10,
     whiteTransparent20: colors.transparent.white20,
@@ -76,9 +77,15 @@ const lightTheme = {
     round: spacing.radius.full,
   },
   shadows: {
-    ...shadows.ios,
+    ...shadows.components,
+    // Add all shadow presets with Android elevation included
+    minimal: shadows.components.card,
+    soft: shadows.components.card,
+    medium: shadows.components.cardHover,
+    premium: shadows.components.rewardsWidget,
+    large: shadows.components.floatingBar,
     // Add float alias for floating cart
-    float: shadows.ios.floatingBar || shadows.ios.large,
+    float: shadows.components.floatingBar,
   },
 };
 
@@ -95,6 +102,7 @@ const darkTheme = {
     accent: colors.primary.main,
     accentDark: colors.primary.dark,
     terracotta: colors.accent.main,
+    terracottaDark: colors.accent.dark,
     white: '#FFFFFF',
     whiteTransparent10: colors.transparent.white10,
     whiteTransparent20: colors.transparent.white20,
@@ -142,9 +150,15 @@ const darkTheme = {
     round: spacing.radius.full,
   },
   shadows: {
-    ...shadows.dark,
+    ...shadows.components,
+    // Use components shadows which include elevation for Android
+    minimal: shadows.components.card,
+    soft: shadows.components.card,
+    medium: shadows.components.cardHover,
+    premium: shadows.components.rewardsWidget,
+    large: shadows.components.floatingBar,
     // Add float alias for floating cart
-    float: shadows.dark?.floatingBar || shadows.ios.floatingBar || shadows.ios.large,
+    float: shadows.components.floatingBar,
   },
 };
 

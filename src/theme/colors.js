@@ -8,7 +8,7 @@ const colors = {
   primary: {
     main: '#6B7F47',        // Deep Olive Green
     light: '#8A9D66',       // Lighter Olive
-    dark: '#556433',        // Darker Olive
+    dark: '#5A6B3B',        // Darker Olive (matches mockup accent-dark)
     contrast: '#FFFFFF',    // Text on primary
   },
 
@@ -16,7 +16,7 @@ const colors = {
   accent: {
     main: '#B8654B',        // Terracotta
     light: '#C9826D',       // Lighter Terracotta
-    dark: '#9A5239',        // Darker Terracotta
+    dark: '#A05940',        // Darker Terracotta (matches mockup terracotta-dark)
     contrast: '#FFFFFF',    // Text on accent
   },
 
