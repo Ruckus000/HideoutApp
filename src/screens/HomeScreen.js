@@ -31,6 +31,13 @@ import theme from '../theme'; // Centralized design system with colors, typograp
 // Get device width for responsive layout calculations (used for product card sizing)
 const { width } = Dimensions.get('window');
 
+/**
+ * The main landing screen of the application.
+ * It displays a personalized greeting, a rewards card, a category filter,
+ * a grid of popular products, and a community event banner.
+ *
+ * @returns {JSX.Element} The rendered HomeScreen component.
+ */
 const HomeScreen = () => {
   /**
    * STATE MANAGEMENT

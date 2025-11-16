@@ -40,6 +40,16 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 const { width } = Dimensions.get('window');
 
+/**
+ * A screen that displays detailed information about a single product.
+ * It allows users to customize their selection with different sizes and add-ons,
+ * adjust the quantity, and add the item to their cart.
+ *
+ * @param {object} props - The component props.
+ * @param {object} props.navigation - The navigation object provided by React Navigation.
+ * @param {object} props.route - The route object containing parameters passed to this screen.
+ * @returns {JSX.Element} The rendered ProductDetailScreen component.
+ */
 const ProductDetailScreen = ({ navigation, route }) => {
   /**
    * Product Data

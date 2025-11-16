@@ -3,13 +3,14 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-nati
 import theme from '../theme';
 
 /**
- * CategoryPill - Horizontal scrolling category selector
- * Displays a horizontal list of pill-shaped category buttons
+ * A horizontal scrolling list of pill-shaped category buttons.
  *
- * @param {Array} categories - Array of category strings
- * @param {number} selectedIndex - Index of the selected category
- * @param {function} onSelectCategory - Callback when category is selected
- * @param {boolean} showScrollIndicator - Show scroll indicator (default: false)
+ * @param {object} props - The component's props.
+ * @param {string[]} props.categories - An array of category names to display.
+ * @param {number} props.selectedIndex - The index of the currently selected category.
+ * @param {function(number): void} props.onSelectCategory - A callback function that is called when a category is selected. It receives the index of the selected category.
+ * @param {boolean} [props.showScrollIndicator=false] - Whether to show the horizontal scroll indicator.
+ * @returns {React.ReactElement} The rendered component.
  */
 const CategoryPill = ({
   categories = [],

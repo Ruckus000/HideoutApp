@@ -50,6 +50,16 @@ const CartContext = createContext();
  * - Saves cart to AsyncStorage whenever cartItems changes
  * - Key: 'hideoutCart' - stored as JSON string
  */
+
+/**
+ * Provides cart state and actions to its children components.
+ * It manages the cart items, including adding, removing, and updating quantities,
+ * and persists the cart data to AsyncStorage.
+ *
+ * @param {object} props - The component props.
+ * @param {React.ReactNode} props.children - The child components that need access to the cart context.
+ * @returns {JSX.Element} The CartProvider component.
+ */
 export const CartProvider = ({ children }) => {
   /**
    * Cart Items State
@@ -512,6 +522,13 @@ export const CartProvider = ({ children }) => {
  * - Developer-friendly API maintains code clarity
  * - Fail-fast error prevents runtime bugs
  * - Follows React best practices for context consumption
+ */
+/**
+ * Custom hook to access the cart context.
+ * This provides an easy way to access cart data and actions in components.
+ *
+ * @returns {object} The cart context value, including cart items, counts, and actions.
+ * @throws {Error} If used outside of a CartProvider.
  */
 export const useCart = () => {
   const context = useContext(CartContext);

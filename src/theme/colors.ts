@@ -1,8 +1,10 @@
 /**
- * Color palette for HideOut Kava App
- * Based on the UI/UX design system
+ * @fileoverview Defines the primary color palette for the HideOut Kava App.
+ * This file contains a simplified color scheme based on the application's UI/UX design system,
+ * focusing on core brand, text, and status colors.
+ *
+ * @see /docs/ui-ux.md for the full design system details.
  */
-
 export const colors = {
   // Primary colors
   primary: '#8B4513', // Kava brown
@@ -38,4 +40,8 @@ export const colors = {
   transparent: 'transparent',
 };
 
+/**
+ * A TypeScript type that represents the names of the available colors in the palette.
+ * This allows for type-safe usage of colors throughout the application.
+ */
 export type ColorName = keyof typeof colors;
