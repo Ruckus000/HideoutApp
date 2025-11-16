@@ -1,9 +1,11 @@
 /**
- * Typography System
- * Based on iOS SF Pro Display/Text
- * Warm Minimalist Design - Hierarchy through weight and size
+ * @fileoverview Defines the typography system for the application, based on the iOS
+ * SF Pro Display/Text fonts. This system establishes a clear visual hierarchy through
+ * a consistent scale of font sizes, weights, and predefined text styles, aligning with
+ * the "Warm Minimalist" design philosophy.
+ *
+ * @see /docs/ui-ux.md for more details on the typography guidelines.
  */
-
 const typography = {
   // Font Families
   fonts: {

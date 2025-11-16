@@ -33,6 +33,13 @@ import theme from '../theme';
 
 const { width } = Dimensions.get('window');
 
+/**
+ * A screen that displays the user's loyalty rewards status, including their current tier,
+ * points, redeemable rewards, and achievement badges. It also shows different ways
+ * for the user to earn more points.
+ *
+ * @returns {JSX.Element} The rendered RewardsScreen component.
+ */
 const RewardsScreen = () => {
   // Cart state - tracks number of items for floating cart summary
   // This enables cross-screen cart awareness without full state management

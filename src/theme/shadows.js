@@ -1,8 +1,11 @@
 /**
- * Shadow System
- * Premium, soft shadows for Warm Minimalist Design
+ * @fileoverview Defines the shadow system for the application, providing a set of
+ * premium, soft shadows that align with the "Warm Minimalist" design philosophy.
+ * This file includes shadow styles for iOS, Android (elevation), and CSS (for web),
+ * as well as component-specific and dark mode variations.
+ *
+ * @see /docs/ui-ux.md for more details on the design system's approach to depth and elevation.
  */
-
 const shadows = {
   // iOS-style shadows (for React Native)
   ios: {

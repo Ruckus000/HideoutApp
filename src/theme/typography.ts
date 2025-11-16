@@ -1,7 +1,8 @@
 /**
- * Typography styles for HideOut Kava App
+ * @fileoverview Defines the typography styles for the HideOut Kava App.
+ * This file provides a consistent scale for font sizes, weights, and line heights
+ * to ensure a cohesive and readable user interface.
  */
-
 export const typography = {
   // Font sizes
   fontSize: {
@@ -31,5 +32,12 @@ export const typography = {
   },
 };
 
+/**
+ * A TypeScript type representing the available font sizes.
+ */
 export type FontSize = keyof typeof typography.fontSize;
+
+/**
+ * A TypeScript type representing the available font weights.
+ */
 export type FontWeight = keyof typeof typography.fontWeight;
