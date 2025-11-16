@@ -1,0 +1,379 @@
+import React, { useState } from ‘react’;
+import { Home, Star, ShoppingBag, User, Gift, Coffee, Users, Calendar, TrendingUp, Award, ChevronRight, Lock } from ‘lucide-react’;
+
+const KavaHubRewards = () => {
+const [cartCount] = useState(2);
+const [selectedRewardCategory, setSelectedRewardCategory] = useState(‘available’);
+
+const rewardCategories = [‘Available’, ‘My Rewards’, ‘History’];
+
+const availableRewards = [
+{
+id: 1,
+name: ‘Free Kava Shot’,
+points: 500,
+description: ‘Any size, any flavor’,
+icon: ‘🥥’,
+available: true,
+expiresIn: ‘30 days’
+},
+{
+id: 2,
+name: ‘$5 Off Purchase’,
+points: 750,
+description: ‘Minimum $15 order’,
+icon: ‘💵’,
+available: true,
+expiresIn: ‘30 days’
+},
+{
+id: 3,
+name: ‘Free Add-In’,
+points: 250,
+description: ‘CBD, Extra Shot, or Flavor’,
+icon: ‘✨’,
+available: true,
+expiresIn: ‘30 days’
+},
+{
+id: 4,
+name: ‘Birthday Special’,
+points: 1000,
+description: ‘Exclusive birthday drink’,
+icon: ‘🎉’,
+available: false,
+expiresIn: null
+}
+];
+
+const waysToEarn = [
+{
+title: ‘Refer a Friend’,
+points: ‘+250 pts’,
+description: ‘Both get rewards’,
+icon: <Users size={20} />
+},
+{
+title: ‘2x Points Tuesdays’,
+points: ‘2x’,
+description: ‘Every Tuesday all day’,
+icon: <Calendar size={20} />
+},
+{
+title: ‘Community Events’,
+points: ‘+100 pts’,
+description: ‘Check in at events’,
+icon: <Coffee size={20} />
+}
+];
+
+const badges = [
+{
+name: ‘Early Bird’,
+description: ‘5 morning visits’,
+earned: true,
+icon: ‘🌅’
+},
+{
+name: ‘Kava Explorer’,
+description: ‘Tried 10 different drinks’,
+earned: true,
+icon: ‘🗺️’
+},
+{
+name: ‘Community Champion’,
+description: ‘Attended 3 events’,
+earned: false,
+progress: 2,
+total: 3,
+icon: ‘🏆’
+},
+{
+name: ‘Zen Master’,
+description: ‘30-day streak’,
+earned: false,
+progress: 12,
+total: 30,
+icon: ‘🧘’
+}
+];
+
+return (
+<div className="flex flex-col h-screen bg-background">
+{/* Status Bar */}
+<div className="flex justify-between items-center px-6 pt-3 pb-2 text-primary">
+<span className="text-base font-semibold tracking-tight">9:41</span>
+<div className="flex items-center gap-1.5">
+<div className="w-4 h-3 flex gap-0.5">
+<span className="w-1 h-2 bg-primary rounded-sm opacity-40"></span>
+<span className="w-1 h-2.5 bg-primary rounded-sm opacity-60"></span>
+<span className="w-1 h-3 bg-primary rounded-sm opacity-80"></span>
+<span className="w-1 h-3 bg-primary rounded-sm"></span>
+</div>
+<span className="text-xs">5G</span>
+<div className="w-6 h-3 border border-primary rounded-sm p-0.5">
+<div className="w-full h-full bg-primary rounded-sm"></div>
+</div>
+</div>
+</div>
+
+```
+  {/* Header */}
+  <div className="px-6 pt-2 pb-4">
+    <h1 className="text-3xl font-bold text-primary tracking-tight">Rewards & Status</h1>
+  </div>
+
+  {/* Main Scrollable Content */}
+  <div className="flex-1 overflow-y-auto pb-20">
+    {/* Enhanced Rewards Status Card */}
+    <div className="mx-6 mb-6">
+      <div className="bg-gradient-to-br from-accent to-accent-dark rounded-2xl p-6 shadow-premium">
+        <div className="flex justify-between items-start mb-5">
+          <div>
+            <p className="text-white/80 text-xs font-medium uppercase tracking-wider mb-1">Member Status</p>
+            <h2 className="text-white text-2xl font-bold">Gold Tier</h2>
+          </div>
+          <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur">
+            <Award size={24} className="text-white" fill="white" />
+          </div>
+        </div>
+        
+        <div className="bg-white/10 rounded-xl p-4 backdrop-blur mb-4">
+          <div className="flex justify-between items-center mb-3">
+            <div>
+              <p className="text-white text-2xl font-bold">750</p>
+              <p className="text-white/70 text-sm">Community Points</p>
+            </div>
+            <div className="text-right">
+              <p className="text-white/70 text-sm">Next Reward</p>
+              <p className="text-white font-semibold">250 pts</p>
+            </div>
+          </div>
+          <div className="h-2.5 bg-white/20 rounded-full overflow-hidden">
+            <div className="h-full w-3/4 bg-white rounded-full transition-all duration-700 ease-out"></div>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-3 gap-4">
+          <div className="text-center">
+            <p className="text-white text-lg font-bold">12</p>
+            <p className="text-white/70 text-xs">Visits</p>
+          </div>
+          <div className="text-center border-x border-white/20">
+            <p className="text-white text-lg font-bold">3</p>
+            <p className="text-white/70 text-xs">Rewards</p>
+          </div>
+          <div className="text-center">
+            <p className="text-white text-lg font-bold">$89</p>
+            <p className="text-white/70 text-xs">Saved</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Redeemable Rewards Section */}
+    <div className="px-6 mb-6">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-primary">Redeem Rewards</h3>
+        <button className="text-accent text-sm font-medium">View All</button>
+      </div>
+      
+      <div className="space-y-3">
+        {availableRewards.slice(0, 3).map((reward) => (
+          <div key={reward.id} className="bg-surface rounded-2xl p-4 shadow-soft">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 bg-accent/10 rounded-full flex items-center justify-center text-2xl">
+                {reward.icon}
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-primary text-base">{reward.name}</h4>
+                <p className="text-secondary text-sm">{reward.description}</p>
+                {reward.expiresIn && (
+                  <p className="text-xs text-secondary mt-1">Expires in {reward.expiresIn}</p>
+                )}
+              </div>
+              <div className="text-right">
+                <button 
+                  className={`px-4 py-2 rounded-xl font-semibold text-sm transition-all ${
+                    reward.available 
+                      ? 'bg-accent text-white hover:scale-105' 
+                      : 'bg-gray-100 text-gray-400'
+                  }`}
+                  disabled={!reward.available}
+                >
+                  {reward.available ? `${reward.points} pts` : <Lock size={16} />}
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Ways to Earn */}
+    <div className="px-6 mb-6">
+      <h3 className="text-lg font-semibold text-primary mb-4">Ways to Earn</h3>
+      <div className="bg-surface rounded-2xl shadow-soft overflow-hidden">
+        {waysToEarn.map((way, index) => (
+          <button
+            key={index}
+            className="w-full px-4 py-4 flex items-center gap-4 hover:bg-surface-hover transition-colors border-b border-gray-50 last:border-0"
+          >
+            <div className="w-10 h-10 bg-terracotta/10 rounded-full flex items-center justify-center text-terracotta">
+              {way.icon}
+            </div>
+            <div className="flex-1 text-left">
+              <h4 className="font-semibold text-primary text-sm">{way.title}</h4>
+              <p className="text-secondary text-xs">{way.description}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-terracotta text-sm">{way.points}</span>
+              <ChevronRight size={16} className="text-gray-400" />
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+
+    {/* Badges & Achievements */}
+    <div className="px-6 mb-6">
+      <h3 className="text-lg font-semibold text-primary mb-4">Badges & Achievements</h3>
+      <div className="grid grid-cols-2 gap-3">
+        {badges.map((badge, index) => (
+          <div
+            key={index}
+            className={`bg-surface rounded-2xl p-4 shadow-soft ${
+              !badge.earned ? 'opacity-75' : ''
+            }`}
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className={`text-4xl mb-2 ${!badge.earned ? 'grayscale opacity-50' : ''}`}>
+                {badge.icon}
+              </div>
+              <h4 className="font-semibold text-primary text-sm mb-1">{badge.name}</h4>
+              <p className="text-secondary text-xs">{badge.description}</p>
+              {!badge.earned && badge.progress && (
+                <div className="w-full mt-3">
+                  <div className="flex justify-between text-xs text-secondary mb-1">
+                    <span>{badge.progress}/{badge.total}</span>
+                    <span>{Math.round((badge.progress/badge.total) * 100)}%</span>
+                  </div>
+                  <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-accent rounded-full transition-all duration-300"
+                      style={{ width: `${(badge.progress/badge.total) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  {/* Floating Cart Summary (when items in cart) */}
+  {cartCount > 0 && (
+    <div className="absolute bottom-20 left-4 right-4 bg-primary rounded-2xl p-4 shadow-float">
+      <button className="w-full flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+            <ShoppingBag size={16} className="text-white" />
+          </div>
+          <div className="text-left">
+            <p className="text-white font-semibold text-sm">{cartCount} items</p>
+            <p className="text-white/70 text-xs">$24.50</p>
+          </div>
+        </div>
+        <span className="text-white font-semibold text-sm">View Cart →</span>
+      </button>
+    </div>
+  )}
+
+  {/* Bottom Tab Bar */}
+  <div className="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-gray-100">
+    <div className="flex justify-around items-center py-2 px-2">
+      <button className="flex flex-col items-center gap-1 py-2 px-3 rounded-lg">
+        <Home size={24} className="text-gray-400" strokeWidth={2} />
+        <span className="text-xs text-gray-400">Home</span>
+      </button>
+      
+      <button className="flex flex-col items-center gap-1 py-2 px-3 rounded-lg">
+        <Star size={24} className="text-accent" fill="currentColor" strokeWidth={0} />
+        <span className="text-xs font-medium text-accent">Rewards</span>
+      </button>
+      
+      <button className="flex flex-col items-center gap-1 py-2 px-3 rounded-lg relative">
+        <ShoppingBag size={24} className="text-gray-400" strokeWidth={2} />
+        <div className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-terracotta rounded-full flex items-center justify-center">
+          <span className="text-white text-xs font-bold">{cartCount}</span>
+        </div>
+        <span className="text-xs text-gray-400">Cart</span>
+      </button>
+      
+      <button className="flex flex-col items-center gap-1 py-2 px-3 rounded-lg">
+        <User size={24} className="text-gray-400" strokeWidth={2} />
+        <span className="text-xs text-gray-400">Profile</span>
+      </button>
+    </div>
+  </div>
+
+  <style jsx>{`
+    .bg-background { background: #FAFAF8; }
+    .bg-surface { background: #FFFFFF; }
+    .bg-surface-hover { background: #F5F5F3; }
+    
+    .text-primary { color: #1C1C1E; }
+    .text-secondary { color: #8E8E93; }
+    
+    .bg-accent { background: #6B7F47; }
+    .bg-accent-dark { background: #5A6B3B; }
+    .text-accent { color: #6B7F47; }
+    
+    .bg-terracotta { background: #B8654B; }
+    .text-terracotta { color: #B8654B; }
+    
+    .bg-gradient-to-br {
+      background: linear-gradient(135deg, #6B7F47 0%, #5A6B3B 100%);
+    }
+    
+    .shadow-premium {
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08), 0 2px 10px rgba(0,0,0,0.04);
+    }
+    
+    .shadow-soft {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.02);
+    }
+    
+    .shadow-float {
+      box-shadow: 0 15px 50px rgba(0,0,0,0.15), 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    .backdrop-blur {
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    
+    .backdrop-blur-xl {
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    
+    .grayscale {
+      filter: grayscale(100%);
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  `}</style>
+</div>
+```
+
+);
+};
+
+export default KavaHubRewards;
