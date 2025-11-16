@@ -3,16 +3,19 @@ import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import theme from '../theme';
 
 /**
- * ProductCard - Product display card component
- * Shows product image, category, name, price, and add button
+ * A card component that displays product information, including an image or emoji,
+ * category, name, and price. It also features an "add" button to allow users to
+ * add the product to their cart.
  *
- * @param {string} image - Product image URL or emoji
- * @param {string} category - Product category label
- * @param {string} name - Product name
- * @param {string|number} price - Product price (formatted or number)
- * @param {string} backgroundColor - Background color for image area
- * @param {function} onAddPress - Callback when add button is pressed
- * @param {object} style - Additional styles for the card container
+ * @param {object} props - The component props.
+ * @param {string} props.image - The URL of the product image or an emoji to display.
+ * @param {string} props.category - The category of the product.
+ * @param {string} props.name - The name of the product.
+ * @param {string|number} props.price - The price of the product, either as a formatted string or a number.
+ * @param {string} props.backgroundColor - The background color for the image container.
+ * @param {function} props.onAddPress - The function to call when the add button is pressed.
+ * @param {object} props.style - Additional styles to apply to the card container.
+ * @returns {JSX.Element} The rendered ProductCard component.
  */
 const ProductCard = ({
   image,

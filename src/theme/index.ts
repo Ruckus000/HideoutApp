@@ -7,6 +7,17 @@ import { colors } from './colors';
 import { typography } from './typography';
 import { spacing } from './spacing';
 
+/**
+ * The main theme object for the application.
+ * This object consolidates all the design tokens, including colors, typography, spacing,
+ * border radius, and shadows, into a single, easily accessible structure.
+ *
+ * @property {object} colors - The color palette.
+ * @property {object} typography - Typography styles, including font families, sizes, and weights.
+ * @property {object} spacing - Spacing units for layout and components.
+ * @property {object} borderRadius - Border radius values for creating rounded corners.
+ * @property {object} shadows - Shadow styles for creating depth and elevation.
+ */
 export const theme = {
   colors,
   typography,
@@ -48,4 +59,9 @@ export const theme = {
 };
 
 export { colors, typography, spacing };
+
+/**
+ * A TypeScript type that represents the structure of the theme object.
+ * This provides type safety and autocompletion when working with the theme in a TypeScript environment.
+ */
 export type Theme = typeof theme;

@@ -3,19 +3,20 @@ import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from 'react-nat
 import theme from '../theme';
 
 /**
- * CustomButton - Styled button component
- * Versatile button matching the warm minimalist design system
+ * A versatile and styled button component that adapts to the app's warm minimalist design system.
  *
- * @param {string} title - Button text
- * @param {function} onPress - Callback when button is pressed
- * @param {string} variant - Button style variant: 'primary', 'secondary', 'outline', 'ghost' (default: 'primary')
- * @param {string} size - Button size: 'small', 'medium', 'large' (default: 'medium')
- * @param {boolean} disabled - Disabled state
- * @param {boolean} loading - Loading state with spinner
- * @param {boolean} fullWidth - Make button full width
- * @param {React.Component} icon - Optional icon component
- * @param {object} style - Additional styles
- * @param {object} textStyle - Additional text styles
+ * @param {object} props - The component's props.
+ * @param {string} props.title - The text to display inside the button.
+ * @param {function(): void} props.onPress - The function to call when the button is pressed.
+ * @param {('primary'|'secondary'|'outline'|'ghost')} [props.variant='primary'] - The button's style variant.
+ * @param {('small'|'medium'|'large')} [props.size='medium'] - The button's size.
+ * @param {boolean} [props.disabled=false] - Whether the button is disabled.
+ * @param {boolean} [props.loading=false] - Whether to show a loading spinner instead of the button text.
+ * @param {boolean} [props.fullWidth=false] - Whether the button should take up the full width of its container.
+ * @param {React.ComponentType<any>} [props.icon] - An optional icon component to display to the left of the text.
+ * @param {object} [props.style] - Additional styles to apply to the button container.
+ * @param {object} [props.textStyle] - Additional styles to apply to the button text.
+ * @returns {React.ReactElement} The rendered component.
  */
 const CustomButton = ({
   title,

@@ -3,25 +3,13 @@ import { CartProvider } from './CartContext';
 import { UserProvider } from './UserContext';
 
 /**
- * AppProvider - Main context provider that wraps the entire application
+ * A top-level component that wraps the entire application, providing access to all
+ * necessary contexts, such as the user and cart states.
  *
- * This component combines all global state providers (Cart and User contexts)
- * into a single wrapper component for cleaner app initialization.
- *
- * Usage:
- * Wrap your root App component with AppProvider in your index.js or App.js:
- *
- * import AppProvider from './context/AppProvider';
- *
- * function Root() {
- *   return (
- *     <AppProvider>
- *       <App />
- *     </AppProvider>
- *   );
- * }
+ * @param {object} props - The component props.
+ * @param {React.ReactNode} props.children - The child components to be rendered within the provider.
+ * @returns {JSX.Element} The rendered component with all context providers.
  */
-
 const AppProvider = ({ children }) => {
   return (
     <UserProvider>

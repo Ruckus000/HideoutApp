@@ -31,6 +31,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import { colors, spacing, borderRadius, typography, shadows } from '../theme';
 
+/**
+ * A screen that displays the user's shopping cart.
+ * It allows users to view, modify, and clear their cart items, apply promo codes,
+ * and proceed to checkout. It also handles an empty cart state.
+ *
+ * @returns {JSX.Element} The rendered CartScreen component.
+ */
 const CartScreen = () => {
   /**
    * Cart Items State Management

@@ -1,8 +1,10 @@
 /**
- * Warm Minimalist Color Palette
- * Based on Kava Community Hub UX/UI Design System
+ * @fileoverview Defines the color palette for the application, following a "Warm Minimalist" design system.
+ * This color system is based on the Kava Community Hub UX/UI Design System and provides a
+ * comprehensive set of colors for both light and dark modes, semantic states, and special UI elements.
+ *
+ * @see /docs/ui-ux.md for more details on the design system.
  */
-
 const colors = {
   // Primary Colors
   primary: {

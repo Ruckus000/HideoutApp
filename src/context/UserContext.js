@@ -124,6 +124,15 @@ const defaultUserState = {
  * - Only saves if user is logged in (profile.id exists)
  * - Key: 'hideoutUser' - stored as JSON string
  */
+/**
+ * Provides user state and actions to its children components.
+ * It manages user profile information, rewards, order history, and preferences,
+ * and persists the user data to AsyncStorage.
+ *
+ * @param {object} props - The component props.
+ * @param {React.ReactNode} props.children - The child components that need access to the user context.
+ * @returns {JSX.Element} The UserProvider component.
+ */
 export const UserProvider = ({ children }) => {
   /**
    * User State
@@ -867,6 +876,13 @@ export const UserProvider = ({ children }) => {
  * - Developer-friendly API maintains code clarity
  * - Fail-fast error prevents runtime bugs
  * - Follows React best practices for context consumption
+ */
+/**
+ * Custom hook to access the user context.
+ * This provides an easy way to access user data and actions in components.
+ *
+ * @returns {object} The user context value, including user profile, rewards, and actions.
+ * @throws {Error} If used outside of a UserProvider.
  */
 export const useUser = () => {
   const context = useContext(UserContext);

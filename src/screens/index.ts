@@ -1,6 +1,11 @@
 /**
- * Screen exports
- * Central export point for all screens
+ * @fileoverview This file serves as a central export point for all screen components.
+ * Consolidating exports here allows for cleaner imports in other parts of the application,
+ * such as the navigation setup. Instead of importing each screen individually, other files
+ * can import them from `@/screens`.
+ *
+ * For example:
+ * `import { HomeScreen, CartScreen } from '@/screens';`
  */
 
 export { default as HomeScreen } from './HomeScreen';

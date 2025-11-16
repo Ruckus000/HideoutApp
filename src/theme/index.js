@@ -163,6 +163,23 @@ const darkTheme = {
 };
 
 // Default theme (light mode)
+/**
+ * The main theme object for the application.
+ * It combines all design tokens (colors, typography, spacing, shadows) and provides
+ * additional utilities like breakpoints, z-index layers, and animation settings.
+ *
+ * @property {object} colors - The color palette for the current theme mode.
+ * @property {object} typography - Typography styles, including font sizes and weights.
+ * @property {object} spacing - Spacing units for layout and components.
+ * @property {object} borderRadius - Border radius values for creating rounded corners.
+ * @property {object} shadows - Shadow styles for creating depth and elevation.
+ * @property {object} dark - The dark theme configuration.
+ * @property {function} getTheme - A helper function to get the theme configuration for a specific mode.
+ * @property {object} breakpoints - Breakpoints for responsive design.
+ * @property {object} zIndex - Z-index values for managing layers.
+ * @property {object} animation - Animation duration settings.
+ * @property {object} easing - Easing functions for animations.
+ */
 const theme = {
   ...lightTheme,
 

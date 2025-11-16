@@ -26,6 +26,13 @@ import { Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, spacing, borderRadius, typography, shadows } from '../theme';
 
+/**
+ * A screen that displays the user's profile information and provides access to
+ * various account management options, such as order history, payment methods,
+ * and app preferences.
+ *
+ * @returns {JSX.Element} The rendered ProfileScreen component.
+ */
 const ProfileScreen = () => {
   /**
    * State Management

@@ -1,8 +1,11 @@
 /**
- * Spacing System - 8pt Grid
- * Warm Minimalist Design - Generous use of negative space
+ * @fileoverview Defines the spacing system for the application, based on an 8pt grid.
+ * This system promotes consistency and visual harmony by providing a predefined scale
+ * for margins, padding, and layout dimensions. It is a key part of the "Warm Minimalist"
+ * design philosophy, which emphasizes generous use of negative space.
+ *
+ * @see /docs/ui-ux.md for more details on the 8pt grid system.
  */
-
 const spacing = {
   // Base unit (8pt)
   base: 8,

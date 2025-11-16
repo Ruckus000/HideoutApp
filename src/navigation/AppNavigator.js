@@ -65,6 +65,12 @@ const Stack = createStackNavigator();
  * - High contrast background ensures visibility without visual clutter
  * - Bold typography provides clear readability
  */
+/**
+ * A badge component that displays the number of items in the cart.
+ * It is designed to be placed on top of the cart tab icon.
+ *
+ * @returns {JSX.Element|null} The rendered badge component or null if the cart is empty.
+ */
 const CartTabBadge = () => {
   const { cartCount } = useCart();
 
@@ -109,6 +115,12 @@ const CartTabBadge = () => {
  * - Tab bar styled with surface background and subtle border for depth
  * - Labels use medium font weight (600) for clear hierarchy
  * - Wraps tabs in View container to enable FloatingCartBar positioning
+ */
+/**
+ * The main bottom tab navigator for the application.
+ * It includes tabs for Home, Rewards, Cart, and Profile.
+ *
+ * @returns {JSX.Element} The rendered bottom tab navigator.
  */
 const BottomTabNavigator = () => {
   return (
@@ -289,6 +301,12 @@ const BottomTabNavigator = () => {
  * - presentation: 'card' provides smooth, native-feeling transitions
  * - Minimalist approach: only add screens when necessary
  */
+/**
+ * The root stack navigator that contains the main tab navigator and any additional
+ * modal or full-screen views.
+ *
+ * @returns {JSX.Element} The rendered root stack navigator.
+ */
 const RootStack = () => {
   return (
     <Stack.Navigator
@@ -352,6 +370,11 @@ const RootStack = () => {
  * - Safe area handling ensures content respects device boundaries
  * - This structure supports the "warm minimalism" philosophy by keeping
  *   the architecture clean and purposeful - every wrapper has a clear role
+ */
+/**
+ * The main application navigator, which sets up the navigation container and context providers.
+ *
+ * @returns {JSX.Element} The rendered application navigator.
  */
 const AppNavigator = () => {
   return (
