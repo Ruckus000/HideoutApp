@@ -1,0 +1,54 @@
+<svg width="2048" height="2048" viewBox="0 0 2048 2048" xmlns="http://www.w3.org/2000/svg">
+  <!-- HideOut Kava Splash Screen -->
+
+  <!-- Background: Warm Off-White -->
+  <rect width="2048" height="2048" fill="#FAFAF8"/>
+
+  <!-- Center logo element -->
+  <g transform="translate(1024, 1024)">
+    <!-- Circular background: Deep Olive Green -->
+    <circle cx="0" cy="0" r="400" fill="#6B7F47" opacity="0.95"/>
+
+    <!-- Inner glow -->
+    <circle cx="0" cy="0" r="350" fill="#7A8E56" opacity="0.25"/>
+
+    <!-- Kava leaf/root design -->
+    <g>
+      <!-- Main stem -->
+      <rect x="-20" y="-280" width="40" height="400" rx="20" fill="#FAFAF8" opacity="0.95"/>
+
+      <!-- Left branch -->
+      <path d="M -20,-100 Q -130,-80 -200,-150 Q -206,-156 -200,-162 Q -125,-88 -20,-110 Z" fill="#FAFAF8" opacity="0.95"/>
+
+      <!-- Right branch -->
+      <path d="M 20,-100 Q 130,-80 200,-150 Q 206,-156 200,-162 Q 125,-88 20,-110 Z" fill="#FAFAF8" opacity="0.95"/>
+
+      <!-- Bottom left branch -->
+      <path d="M -20,20 Q -100,38 -150,0 Q -156,-6 -150,-12 Q -95,22 -20,10 Z" fill="#FAFAF8" opacity="0.95"/>
+
+      <!-- Bottom right branch -->
+      <path d="M 20,20 Q 100,38 150,0 Q 156,-6 150,-12 Q 95,22 20,10 Z" fill="#FAFAF8" opacity="0.95"/>
+    </g>
+  </g>
+
+  <!-- Brand name below -->
+  <text x="1024" y="1650"
+        font-family="SF Pro Display, -apple-system, system-ui, sans-serif"
+        font-size="120"
+        font-weight="600"
+        fill="#6B7F47"
+        text-anchor="middle"
+        letter-spacing="8">HIDEOUT KAVA</text>
+
+  <!-- Tagline -->
+  <text x="1024" y="1770"
+        font-family="SF Pro Text, -apple-system, system-ui, sans-serif"
+        font-size="56"
+        font-weight="400"
+        fill="#8E8E93"
+        text-anchor="middle"
+        letter-spacing="4">Community Hub</text>
+
+  <!-- Accent element -->
+  <circle cx="1024" cy="1500" r="16" fill="#B8654B"/>
+</svg>

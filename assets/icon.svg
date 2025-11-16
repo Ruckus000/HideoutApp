@@ -1,0 +1,40 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- HideOut Kava App Icon - Warm Minimalist Design -->
+
+  <!-- Background: Deep Olive Green (Primary Brand Color) -->
+  <circle cx="512" cy="512" r="512" fill="#6B7F47"/>
+
+  <!-- Inner circle: Slightly lighter for depth -->
+  <circle cx="512" cy="512" r="450" fill="#7A8E56" opacity="0.3"/>
+
+  <!-- Kava leaf/root inspired design element -->
+  <!-- Stylized "K" shape representing kava root -->
+  <g transform="translate(512, 512)">
+    <!-- Main stem -->
+    <rect x="-15" y="-280" width="30" height="400" rx="15" fill="#FAFAF8" opacity="0.95"/>
+
+    <!-- Left branch -->
+    <path d="M -15,-100 Q -120,-80 -180,-150 Q -185,-155 -180,-160 Q -115,-90 -15,-110 Z" fill="#FAFAF8" opacity="0.95"/>
+
+    <!-- Right branch -->
+    <path d="M 15,-100 Q 120,-80 180,-150 Q 185,-155 180,-160 Q 115,-90 15,-110 Z" fill="#FAFAF8" opacity="0.95"/>
+
+    <!-- Bottom left branch -->
+    <path d="M -15,20 Q -90,35 -140,0 Q -145,-5 -140,-10 Q -85,20 -15,10 Z" fill="#FAFAF8" opacity="0.95"/>
+
+    <!-- Bottom right branch -->
+    <path d="M 15,20 Q 90,35 140,0 Q 145,-5 140,-10 Q 85,20 15,10 Z" fill="#FAFAF8" opacity="0.95"/>
+  </g>
+
+  <!-- Subtle text: "HideOut" at bottom -->
+  <text x="512" y="880"
+        font-family="SF Pro Display, -apple-system, system-ui, sans-serif"
+        font-size="72"
+        font-weight="600"
+        fill="#FAFAF8"
+        text-anchor="middle"
+        letter-spacing="4">HIDEOUT</text>
+
+  <!-- Accent dot (terracotta) -->
+  <circle cx="512" cy="780" r="12" fill="#B8654B"/>
+</svg>
