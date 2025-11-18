@@ -1,22 +1,22 @@
 /**
  * FloatingCartBar.js
  *
- * Persistent floating cart summary bar that appears above the tab bar.
+ * Integrated cart summary bar that appears above the tab bar.
  * Provides immediate feedback when items are added to cart and quick access to cart screen.
  *
- * Spec Reference: ui-ux.md Section 4.2 - Global: Floating Cart Summary Bar
+ * Design Reference: Dunkin', Uber Eats, DoorDash pattern
  *
- * Key Requirements from Spec:
- * - Position: Floats persistently at bottom, above the 4-icon tab bar
+ * Key Requirements:
+ * - Position: Sits directly above the tab bar (integrated, not floating)
  * - Trigger: Animates in (slide up) when user taps "Add to Cart"
  * - Contents: Item count, running subtotal, "View Cart" CTA
  * - Action: Tapping navigates to Cart tab
  * - Dismissal: Animates out when cart is emptied or after checkout
- * - Aesthetic: High-contrast background (dark) for clear visibility
+ * - Aesthetic: Light background matching tab bar for seamless integration
  *
  * Design Philosophy - Warm Minimalism:
- * - Non-intrusive feedback (slides in smoothly, doesn't block content)
- * - High contrast dark background stands out without being harsh
+ * - Seamless visual integration with navigation (same background color)
+ * - Non-intrusive feedback (slides in smoothly from below)
  * - Clear typography and spacing maintain readability
  * - Smooth animations feel premium and polished
  * - Single-purpose component reduces cognitive load
@@ -26,6 +26,11 @@
  * - Persistent: Remains visible as user navigates between tabs
  * - Slide Out: Smooth fade + slide when cart becomes empty
  * - Native Driver: Uses native animations for 60fps performance
+ *
+ * Implementation Note:
+ * - Rendered inside CustomTabBar component (AppNavigator.js)
+ * - No absolute positioning needed - normal component in render tree
+ * - React Navigation handles layout and safe areas automatically
  */
 
 import React, { useEffect, useRef } from 'react';
@@ -35,13 +40,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   Animated,
-  Platform,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useCart } from '../context/CartContext';
 import colors from '../theme/colors';
+import { icon, typography } from '../theme';
 
 /**
  * Floating Cart Bar Component
@@ -64,7 +68,6 @@ import colors from '../theme/colors';
  */
 const FloatingCartBar = () => {
   const navigation = useNavigation();
-  const insets = useSafeAreaInsets();
 
   /**
    * Cart State
@@ -212,66 +215,44 @@ const FloatingCartBar = () => {
   };
 
   /**
-   * Position Calculation
-   *
-   * Calculate bottom offset to position bar above tab bar.
-   *
-   * Tab Bar Height: 60px (set in AppNavigator.js tabBarStyle)
-   * Safe Area Insets: Device-specific bottom safe area
-   * Total Offset: Tab bar height + safe area insets
-   *
-   * Why insets.bottom?
-   * - On devices with home indicator (iPhone X+), provides extra spacing
-   * - On devices without, equals 0
-   * - Ensures bar doesn't overlap with system UI
-   *
-   * Example Values:
-   * - iPhone SE: 60px (no home indicator)
-   * - iPhone 14: 60px + 34px = 94px (with home indicator)
-   *
-   * Spec Requirement: "This component 'floats' persistently at the bottom
-   * of the screen. It must be positioned above the 4-icon main tab bar."
-   */
-  const bottomOffset = 60 + insets.bottom;
-
-  /**
    * Animation Interpolation
    *
-   * Converts animation value (0-1) to actual pixel translation.
+   * Converts animation value (0-1) to actual pixel translation for slide effect.
    *
    * slideAnim: 0 to 1
-   * translateY: 150px to 0px
+   * translateY: 100px to 0px
    *
    * Values:
-   * - slideAnim = 0: translateY = 150px (hidden below screen)
-   * - slideAnim = 0.5: translateY = 75px (halfway up)
+   * - slideAnim = 0: translateY = 100px (hidden below, slides down)
+   * - slideAnim = 0.5: translateY = 50px (halfway)
    * - slideAnim = 1: translateY = 0px (fully visible)
    *
-   * Why 150px?
-   * - Enough to completely hide the bar below viewport
-   * - Bar height (~70px) + padding + extra buffer
-   * - Ensures clean entrance from below
+   * Why 100px?
+   * - Cart bar height (~60-70px) + padding (~12-16px) = ~80-90px total
+   * - 100px ensures complete hiding below the component's own height
+   * - Slides up into view when cart has items, creating smooth emergence
+   * - Works with normal component flow (no absolute positioning)
    */
   const translateY = slideAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [150, 0], // Slide up from 150px below to final position
+    outputRange: [100, 0], // Slide up from below to visible position
   });
 
   /**
    * Render
    *
-   * Component structure follows spec 4.2 requirements:
+   * Component structure matches Dunkin' app pattern:
    * - Left section: Cart icon with badge + item count + subtotal
    * - Right section: "View Cart" CTA with chevron
-   * - Dark background for high contrast
+   * - Light background matching nav bar for seamless integration
    * - Fully tappable surface
+   * - Slides up from below when cart has items
    */
   return (
     <Animated.View
       style={[
         styles.container,
         {
-          bottom: bottomOffset,           // Position above tab bar
           transform: [{ translateY }],    // Slide animation
           opacity: fadeAnim,              // Fade animation
         },
@@ -309,11 +290,11 @@ const FloatingCartBar = () => {
               Cart Icon with Badge
 
               Icon: Shopping cart from Ionicons
-              Color: dark.textPrimary (light color on dark background)
+              Color: light.textPrimary (dark color on light background)
               Badge: Small circle with item count
             */}
             <View style={styles.iconContainer}>
-              <Ionicons name="cart" size={22} color={colors.dark.textPrimary} />
+              <Ionicons name="cart" size={icon.md} color={colors.light.textPrimary} />
               {itemCount > 0 && (
                 <View style={styles.badge}>
                   <Text style={styles.badgeText}>{itemCount}</Text>
@@ -356,7 +337,7 @@ const FloatingCartBar = () => {
             <Text style={styles.ctaText}>View Cart</Text>
             <Ionicons
               name="chevron-forward"
-              size={18}
+              size={icon.sm}
               color={colors.primary.contrast}
             />
           </View>
@@ -369,71 +350,63 @@ const FloatingCartBar = () => {
 /**
  * Styles
  *
- * Styling follows warm minimalist design philosophy and spec 4.2 requirements.
+ * Styling matches Dunkin' app pattern with seamless nav bar integration.
  *
  * Key Design Principles:
- * - High contrast dark background for visibility
+ * - Light background matching nav bar (not dark/high-contrast)
+ * - Subtle top border for minimal separation
+ * - No shadows (flat design integrates with nav)
  * - Generous spacing for touch-friendly interaction
- * - Rounded corners maintain soft, approachable aesthetic
- * - Platform-specific shadows for depth perception
  * - Clear visual hierarchy through size and weight
  */
 const styles = StyleSheet.create({
   /**
-   * Container - Positioning and Shadows
+   * Container - Integrated Design
    *
    * Position:
-   * - Absolute positioning floats bar above content
-   * - left/right: 16px insets create breathing room at edges
-   * - bottom: Calculated dynamically (60px + safe area insets)
-   * - zIndex: 999 ensures bar appears above content but below modals
+   * - NO absolute positioning - normal component in render tree
+   * - Rendered inside CustomTabBar component (above BottomTabBar)
+   * - Full width - spans entire screen width naturally
+   * - Background matches tab bar for seamless integration
+   * - Subtle top border provides minimal visual separation
    *
-   * Shadows:
-   * - iOS: Custom shadow with upward offset creates "floating" effect
-   * - Android: elevation: 12 provides material design depth
-   * - Shadow direction: Upward (height: -4) suggests bar floating above
+   * Why no absolute positioning?
+   * - React Navigation's CustomTabBar pattern handles layout
+   * - Proper component hierarchy (cart bar above tab bar)
+   * - No z-index or layering conflicts
+   * - Tab bar remains fully interactive
+   * - React Navigation handles safe areas automatically
    *
-   * Why Platform.select?
-   * - iOS uses shadow properties (shadowColor, shadowOffset, etc.)
-   * - Android uses elevation property
-   * - Different APIs for same visual effect
+   * Why no shadows?
+   * - Integrated design pattern doesn't need floating elevation
+   * - Matches Dunkin' approach where cart bar sits ON the nav
+   * - Cleaner, flatter design aesthetic
+   * - Better performance
    *
    * Design Philosophy:
-   * - Subtle shadow suggests depth without harshness
-   * - High contrast background + shadow = clear visibility
-   * - Generous horizontal insets (16px) prevent edge-to-edge feel
+   * - Seamless visual integration through color matching
+   * - Clean component hierarchy following React Navigation patterns
+   * - Minimal border creates subtle separation without harshness
    */
   container: {
-    position: 'absolute',
-    left: 16,
-    right: 16,
-    zIndex: 999, // Above content, below modals
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: -4 }, // Shadow above (floating effect)
-        shadowOpacity: 0.25,
-        shadowRadius: 12,
-      },
-      android: {
-        elevation: 12, // Material design shadow
-      },
-    }),
+    backgroundColor: colors.light.surface, // Match nav bar background
+    borderTopWidth: 1,
+    borderTopColor: colors.light.border, // Subtle separation
   },
 
   /**
    * Touchable - Tap Surface
    *
-   * borderRadius: 16px creates soft, rounded corners
-   * overflow: 'hidden' ensures content respects rounded corners
+   * No rounded corners - maintains flat, integrated appearance
+   * Full-width tappable area for easy interaction
    *
-   * Why separate from content?
-   * - TouchableOpacity applies press effect to entire surface
-   * - Wrapping content in touchable makes whole bar tappable
+   * Why no border radius?
+   * - Matches nav bar's flat design (no rounded corners)
+   * - Creates seamless visual integration
+   * - Edges align with screen edges (no insets)
    */
   touchable: {
-    borderRadius: 16,
-    overflow: 'hidden',
+    // No border radius for seamless integration
   },
 
   /**
@@ -445,23 +418,21 @@ const styles = StyleSheet.create({
    * - alignItems: 'center' vertically centers content
    *
    * Background:
-   * - dark.surfaceVariant provides high contrast against light screens
-   * - Spec requirement: "Must have a high-contrast background"
+   * - Transparent (inherits from container's light.surface)
+   * - Matches nav bar background for seamless integration
    *
    * Padding:
-   * - Horizontal: 20px provides breathing room for content
-   * - Vertical: 16px ensures adequate touch target height
+   * - Horizontal: 16px matches nav bar padding for visual alignment
+   * - Vertical: 12px creates comfortable touch target (48px min)
    *
-   * Border Radius: 16px maintains rounded corners
+   * No Border Radius: Maintains flat integration with nav
    */
   content: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: colors.dark.surfaceVariant, // High contrast dark background
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
 
   /**
@@ -522,13 +493,12 @@ const styles = StyleSheet.create({
    * Badge Text
    *
    * Small, bold number showing item count.
-   * fontSize: 11px keeps badge compact
-   * fontWeight: 'bold' ensures legibility despite small size
+   * Uses responsive typography from theme.
    */
   badgeText: {
+    ...typography.styles.finePrint,
+    fontWeight: '700',
     color: colors.badge.text,
-    fontSize: 11,
-    fontWeight: 'bold',
   },
 
   /**
@@ -545,17 +515,14 @@ const styles = StyleSheet.create({
    * Item Count Text
    *
    * "3 Items" or "1 Item" text.
-   *
-   * Typography:
-   * - fontSize: 14px (secondary information)
-   * - color: dark.textSecondary (subdued, less prominent)
-   * - marginBottom: 2px creates small gap before subtotal
+   * Uses responsive typography from theme.
    *
    * Hierarchy: Secondary text, supports the more important subtotal below.
+   * Color: Adapted for light background (dark text)
    */
   itemCountText: {
-    fontSize: 14,
-    color: colors.dark.textSecondary,
+    ...typography.styles.body,
+    color: colors.light.textSecondary,
     marginBottom: 2,
   },
 
@@ -563,18 +530,14 @@ const styles = StyleSheet.create({
    * Subtotal Text
    *
    * "$24.50" price display.
-   *
-   * Typography:
-   * - fontSize: 18px (prominent, primary information)
-   * - fontWeight: 'bold' emphasizes importance
-   * - color: dark.textPrimary (high contrast, most visible)
+   * Uses responsive typography from theme.
    *
    * Hierarchy: Primary text, immediately shows user their cart total.
+   * Color: Adapted for light background (dark text)
    */
   subtotalText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.dark.textPrimary,
+    ...typography.styles.h5,
+    color: colors.light.textPrimary,
   },
 
   /**
@@ -611,17 +574,12 @@ const styles = StyleSheet.create({
   /**
    * CTA Text - "View Cart" Label
    *
-   * Typography:
-   * - fontSize: 15px (readable, prominent)
-   * - fontWeight: '600' (semi-bold, confident)
-   * - color: primary.contrast (high contrast against primary.main)
-   * - marginRight: 4px creates space before chevron
+   * Uses responsive typography from theme.
    *
    * Design: Clear, actionable text that invites interaction.
    */
   ctaText: {
-    fontSize: 15,
-    fontWeight: '600',
+    ...typography.styles.button,
     color: colors.primary.contrast,
     marginRight: 4,
   },

@@ -14,6 +14,7 @@ import colors from './colors';
 import typography from './typography';
 import spacing from './spacing';
 import shadows from './shadows';
+import icon from './icon';
 
 // Theme modes
 const lightTheme = {
@@ -231,8 +232,52 @@ const theme = {
   },
 };
 
-// Export individual modules
-export { colors, typography, spacing, shadows };
+// Create flattened exports that match how files use them
+const flattenedTypography = {
+  ...typography,
+  // Flattened font size shortcuts
+  xs: typography.sizes.xxs,
+  sm: typography.sizes.xs,
+  base: typography.sizes.sm,
+  md: typography.sizes.base,
+  lg: typography.sizes.md,
+  xl: typography.sizes.lg,
+  xxl: typography.sizes.xl,
+  xxxl: typography.sizes.xxl,
+  // Flattened font weight shortcuts
+  regular: typography.weights.regular,
+  medium: typography.weights.medium,
+  semibold: typography.weights.semiBold,
+  bold: typography.weights.bold,
+};
+
+const flattenedShadows = {
+  ...shadows.components,
+  // Add all shadow presets with Android elevation included
+  minimal: shadows.components.card,
+  soft: shadows.components.card,
+  medium: shadows.components.cardHover,
+  premium: shadows.components.rewardsWidget,
+  large: shadows.components.floatingBar,
+  // Add float alias for floating cart
+  float: shadows.components.floatingBar,
+};
+
+const borderRadius = {
+  ...spacing.radius,
+  sm: spacing.radius.xs,
+  md: spacing.radius.sm,
+  lg: spacing.radius.md,
+  xl: spacing.radius.lg,
+  xxl: spacing.radius.xl,
+  round: spacing.radius.full,
+};
+
+// Export individual modules (flattened versions for easier use)
+export { colors, spacing, icon };
+export { flattenedTypography as typography };
+export { flattenedShadows as shadows };
+export { borderRadius };
 
 // Export themes
 export { lightTheme, darkTheme };

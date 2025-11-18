@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import theme from '../theme';
+import theme, { icon } from '../theme';
 
 /**
  * RewardCard - Reward item card component
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   icon: {
-    fontSize: 28,
+    fontSize: theme.typography.sizes.xl, // Scaled responsive size
   },
   infoContainer: {
     flex: 1,
@@ -95,17 +95,16 @@ const styles = StyleSheet.create({
     marginRight: theme.spacing.md,
   },
   name: {
-    fontSize: theme.typography.md,
-    fontWeight: theme.typography.semibold,
+    ...theme.typography.styles.bodyLargeMedium,
     color: theme.colors.primary,
     marginBottom: 2,
   },
   description: {
-    fontSize: theme.typography.sm,
+    ...theme.typography.styles.body,
     color: theme.colors.secondary,
   },
   expiration: {
-    fontSize: theme.typography.xs,
+    ...theme.typography.styles.caption,
     color: theme.colors.secondary,
     marginTop: 4,
   },
@@ -122,12 +121,11 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.gray100,
   },
   redeemButtonText: {
-    fontSize: theme.typography.sm,
-    fontWeight: theme.typography.semibold,
+    ...theme.typography.styles.button,
     color: theme.colors.white,
   },
   lockedIcon: {
-    fontSize: 16,
+    fontSize: icon.sm, // Scaled responsive size
   },
 });
 

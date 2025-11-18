@@ -25,13 +25,12 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
-  Dimensions,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
-import theme from '../theme';
-
-const { width } = Dimensions.get('window');
+import theme, { icon } from '../theme';
+import { useResponsive } from '../hooks/useResponsive';
 
 /**
  * A screen that displays the user's loyalty rewards status, including their current tier,
@@ -41,6 +40,9 @@ const { width } = Dimensions.get('window');
  * @returns {JSX.Element} The rendered RewardsScreen component.
  */
 const RewardsScreen = () => {
+  // Responsive design hook for device-aware layouts
+  const { isTablet, wp } = useResponsive();
+
   // Cart state - tracks number of items for floating cart summary
   // This enables cross-screen cart awareness without full state management
   const [cartCount] = useState(2);
@@ -197,14 +199,18 @@ const RewardsScreen = () => {
   ];
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       {/*
         HEADER SECTION
         Displays the screen title with clear visual hierarchy.
         Uses bold, large typography to establish context immediately.
+        Single-word title follows Apple/Airbnb design pattern.
+
+        SafeAreaView ensures the header is not cut off by status bar/notch
+        on devices like iPhone 14 Pro, matching the pattern used in HomeScreen.
       */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Rewards & Status</Text>
+        <Text style={styles.headerTitle}>Rewards</Text>
       </View>
 
       {/*
@@ -249,7 +255,7 @@ const RewardsScreen = () => {
                 <Text style={styles.statusTier}>Gold Tier</Text>
               </View>
               <View style={styles.statusIconContainer}>
-                <Feather name="award" size={24} color={theme.colors.white} />
+                <Feather name="award" size={icon.xl} color={theme.colors.white} />
               </View>
             </View>
 
@@ -377,7 +383,7 @@ const RewardsScreen = () => {
                     {reward.available ? (
                       <Text style={styles.redeemButtonText}>{reward.points} pts</Text>
                     ) : (
-                      <Feather name="lock" size={16} color={theme.colors.gray400} />
+                      <Feather name="lock" size={icon.sm} color={theme.colors.gray400} />
                     )}
                   </TouchableOpacity>
                 </View>
@@ -421,7 +427,7 @@ const RewardsScreen = () => {
               >
                 {/* Terracotta-tinted icon container - distinct from reward green */}
                 <View style={styles.earnIconContainer}>
-                  <Feather name={way.icon} size={20} color={theme.colors.terracotta} />
+                  <Feather name={way.icon} size={icon.md} color={theme.colors.terracotta} />
                 </View>
                 <View style={styles.earnContent}>
                   <Text style={styles.earnTitle}>{way.title}</Text>
@@ -430,7 +436,7 @@ const RewardsScreen = () => {
                 {/* Points badge and chevron indicate tappable item with more details */}
                 <View style={styles.earnAction}>
                   <Text style={styles.earnPoints}>{way.points}</Text>
-                  <Feather name="chevron-right" size={16} color={theme.colors.gray400} />
+                  <Feather name="chevron-right" size={icon.sm} color={theme.colors.gray400} />
                 </View>
               </TouchableOpacity>
             ))}
@@ -534,51 +540,7 @@ const RewardsScreen = () => {
         </View>
       </ScrollView>
 
-      {/*
-        FLOATING CART SUMMARY BAR
-        Persistent bottom element that appears when items are in cart.
-
-        CONDITIONAL RENDERING:
-        - Only displays when cartCount > 0
-        - Prevents visual clutter when cart is empty
-        - Maintains awareness of pending orders while browsing rewards
-
-        POSITIONING:
-        - Absolutely positioned above bottom navigation (bottom: 80px)
-        - Fixed to bottom with left/right margins for floating effect
-        - Float shadow creates depth and draws attention
-
-        DESIGN ELEMENTS:
-        - Dark primary background (#1C1C1E) for high contrast
-        - White text for readability
-        - Prominent shadow (shadow-float) emphasizes importance
-        - Rounded corners (xxl) maintain warm aesthetic
-        - Arrow in CTA text suggests forward action
-
-        USER FLOW:
-        Allows quick cart access without leaving rewards screen,
-        reducing friction in the purchase journey.
-      */}
-      {cartCount > 0 && (
-        <View style={styles.floatingCartContainer}>
-          <TouchableOpacity style={styles.floatingCartButton}>
-            <View style={styles.floatingCartContent}>
-              {/* Shopping bag icon with semi-transparent background */}
-              <View style={styles.floatingCartIconContainer}>
-                <Feather name="shopping-bag" size={16} color={theme.colors.white} />
-              </View>
-              <View>
-                {/* Cart summary: item count and total price */}
-                <Text style={styles.floatingCartItems}>{cartCount} items</Text>
-                <Text style={styles.floatingCartPrice}>$24.50</Text>
-              </View>
-            </View>
-            {/* Call-to-action with arrow for visual direction */}
-            <Text style={styles.floatingCartCTA}>View Cart →</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -626,262 +588,281 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background, // Warm off-white (#FAFAF8)
   },
   header: {
-    paddingHorizontal: theme.spacing.xl,
-    paddingTop: theme.spacing.sm,
-    paddingBottom: theme.spacing.lg,
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.lg,      // Symmetric vertical padding
+    paddingBottom: theme.spacing.lg,   // Creates breathing room
   },
   headerTitle: {
-    fontSize: theme.typography.xxxl, // Large, bold title
-    fontWeight: theme.typography.bold,
+    ...theme.typography.styles.h1,     // Larger, bolder - Apple/Airbnb style
     color: theme.colors.primary,
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 100, // Prevents content from being hidden behind floating cart + nav
+    paddingBottom: 120, // Increased for better bottom breathing room
   },
 
   // ═══ ENHANCED REWARDS STATUS CARD ═══
   // The hero section with gradient background showcasing tier status and points
   statusCardContainer: {
-    marginHorizontal: theme.spacing.xl,
-    marginBottom: theme.spacing.xl,
+    marginHorizontal: theme.spacing.lg,    // Reduced from xl for more screen real estate
+    marginBottom: theme.spacing.xxl,       // Increased bottom margin for visual separation
   },
   statusCard: {
-    borderRadius: theme.borderRadius.xxl, // Large rounded corners for soft, friendly feel
-    padding: theme.spacing.xl,
-    ...theme.shadows.premium, // Strong shadow elevates importance
+    borderRadius: theme.borderRadius.lg,   // Refined for modern feel (16px)
+    paddingVertical: theme.spacing.lg,     // More compact (24px, was 40px)
+    paddingHorizontal: 20,                 // Tighter horizontal (20px, was 32px)
+    ...theme.shadows.premium,
   },
   statusHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: theme.spacing.lg,
+    marginBottom: theme.spacing.md,        // Tighter spacing (16px, was 40px)
   },
   statusLabel: {
-    color: theme.colors.whiteTransparent80,
-    fontSize: theme.typography.xs,
-    fontWeight: theme.typography.medium,
-    letterSpacing: 1,
-    marginBottom: theme.spacing.xs,
+    ...theme.typography.styles.label,       // Upgraded from caption (15px vs 13px)
+    color: theme.colors.white,              // Full white for better contrast
+    opacity: 0.9,                           // Slight transparency
+    textTransform: 'uppercase',
+    letterSpacing: 1.5,                     // More spacing for readability
+    marginBottom: theme.spacing.sm,         // Increased from xs
+    fontWeight: '600',                      // Semi-bold for emphasis
   },
   statusTier: {
+    ...theme.typography.styles.h2,         // Refined size (24px, was ~32-40px)
     color: theme.colors.white,
-    fontSize: theme.typography.xxl,
-    fontWeight: theme.typography.bold,
   },
   statusIconContainer: {
-    width: 48,
-    height: 48,
+    width: 44,                              // More compact (44px, was 56px)
+    height: 44,
     backgroundColor: theme.colors.whiteTransparent20,
     borderRadius: theme.borderRadius.round,
     justifyContent: 'center',
     alignItems: 'center',
   },
   pointsContainer: {
-    backgroundColor: theme.colors.whiteTransparent10,
-    borderRadius: theme.borderRadius.lg,
-    padding: theme.spacing.lg,
-    marginBottom: theme.spacing.lg,
+    backgroundColor: theme.colors.whiteTransparent20, // Increased from 10% to 20% for visibility
+    borderRadius: theme.borderRadius.md,   // Refined (12px)
+    paddingVertical: theme.spacing.md,     // More compact (20px, was 40px)
+    paddingHorizontal: theme.spacing.md,   // Tighter (20px, was 32px)
+    marginBottom: theme.spacing.md,        // Reduced (16px, was 32px)
   },
   pointsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: theme.spacing.md,
+    alignItems: 'flex-end',                // Align baselines better
+    marginBottom: theme.spacing.sm,        // Tighter (12px, was 24px)
   },
   pointsValue: {
+    ...theme.typography.styles.h1,         // Hero number (40px scaled)
     color: theme.colors.white,
-    fontSize: theme.typography.xxl,
-    fontWeight: theme.typography.bold,
+    lineHeight: theme.typography.sizes.xxxl * 1.1, // Tighter line height
   },
   pointsLabel: {
+    ...theme.typography.styles.finePrint,  // Even smaller (11px vs 13px caption)
     color: theme.colors.whiteTransparent70,
-    fontSize: theme.typography.sm,
+    marginTop: theme.spacing.xs,
+    fontWeight: '500',                     // Medium weight for better readability
   },
   nextRewardContainer: {
     alignItems: 'flex-end',
   },
   nextRewardLabel: {
+    ...theme.typography.styles.finePrint,  // Even smaller (was caption)
     color: theme.colors.whiteTransparent70,
-    fontSize: theme.typography.sm,
+    marginBottom: theme.spacing.xxs,
+    fontWeight: '500',
   },
   nextRewardValue: {
+    ...theme.typography.styles.h4,         // Larger than h5 but smaller than h1
     color: theme.colors.white,
-    fontSize: theme.typography.md,
-    fontWeight: theme.typography.semibold,
+    lineHeight: theme.typography.sizes.lg * 1.1,
   },
   // Progress bar styling
   progressBarContainer: {
-    marginTop: theme.spacing.sm,
+    marginTop: theme.spacing.sm,           // Tighter (12px, was 16px)
   },
   progressBarBackground: {
-    height: 10, // Thick enough to be easily visible
-    backgroundColor: theme.colors.whiteTransparent20, // Semi-transparent white
-    borderRadius: theme.borderRadius.round, // Fully rounded ends
-    overflow: 'hidden', // Ensures fill respects rounded corners
+    height: 6,                             // Refined (6px, was 8px)
+    backgroundColor: theme.colors.whiteTransparent20,
+    borderRadius: theme.borderRadius.round,
+    overflow: 'hidden',
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: theme.colors.white, // Bright white stands out on gradient
+    backgroundColor: theme.colors.white,
     borderRadius: theme.borderRadius.round,
     // Width set inline: '75%' represents 750/1000 points progress
   },
   statsGrid: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
+    paddingTop: theme.spacing.md,         // Tighter (16px, was 32px)
+    marginTop: theme.spacing.xs,          // Reduced (8px, was 16px)
   },
   statItem: {
     flex: 1,
     alignItems: 'center',
+    paddingVertical: theme.spacing.sm,    // More compact (12px, was 16px)
   },
   statItemBorder: {
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderColor: theme.colors.whiteTransparent20,
+    borderLeftWidth: 0.5,                 // Hairline (was 1px)
+    borderRightWidth: 0.5,
+    borderColor: theme.colors.whiteTransparent30, // Slightly more visible
   },
   statValue: {
+    ...theme.typography.styles.h5,        // Smaller for tighter spacing (was h4)
     color: theme.colors.white,
-    fontSize: theme.typography.lg,
-    fontWeight: theme.typography.bold,
+    marginBottom: theme.spacing.xxs,      // Tighter (4px, was 8px)
+    fontWeight: '700',                    // Ensure bold
   },
   statLabel: {
+    ...theme.typography.styles.finePrint, // Reduced from caption
     color: theme.colors.whiteTransparent70,
-    fontSize: theme.typography.xs,
+    fontWeight: '500',
   },
 
   // ═══ SECTION LAYOUT ═══
   // Reusable section container for content areas
   section: {
-    paddingHorizontal: theme.spacing.xl,
-    marginBottom: theme.spacing.xl,
+    paddingHorizontal: theme.spacing.lg,   // Consistent with header/status
+    marginBottom: theme.spacing.lg,        // Tighter between sections (24px, was 40px)
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.lg,
+    marginBottom: theme.spacing.md,        // Tighter (16px, was 24px)
   },
   sectionTitle: {
-    fontSize: theme.typography.lg,
-    fontWeight: theme.typography.semibold,
+    ...theme.typography.styles.h3,
     color: theme.colors.primary,
+    fontWeight: '700',                     // Ensure bold
   },
   viewAllButton: {
-    color: theme.colors.accent, // Sage green draws attention
-    fontSize: theme.typography.sm,
-    fontWeight: theme.typography.medium,
+    ...theme.typography.styles.bodyMedium, // Slightly less prominent
+    color: theme.colors.accent,
   },
 
   // ═══ REDEEMABLE REWARDS LIST ═══
   // Card-based layout for reward items with icon, details, and action button
   rewardsList: {
-    gap: theme.spacing.md, // Vertical spacing between reward cards
+    gap: theme.spacing.xs,                 // Tighter gap (8px, was 12px)
   },
   rewardCard: {
-    backgroundColor: theme.colors.surface, // Pure white stands out on off-white bg
-    borderRadius: theme.borderRadius.xxl,
-    padding: theme.spacing.lg,
-    flexDirection: 'row', // Horizontal layout: icon | content | button
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.md,   // More compact (12px, was 24px)
+    paddingVertical: theme.spacing.md,     // Tighter (16px, was 24px)
+    paddingHorizontal: theme.spacing.md,   // Maintained (16px)
+    flexDirection: 'row',
     alignItems: 'center',
-    ...theme.shadows.soft, // Subtle elevation
+    minHeight: 76,                         // Reduced (76px, was 88px)
+    ...theme.shadows.soft,
   },
   rewardIconContainer: {
-    width: 56,
-    height: 56,
-    backgroundColor: 'rgba(107, 127, 71, 0.15)', // 15% opacity sage green
-    borderRadius: theme.borderRadius.round, // Circular container
+    width: 48,                             // More compact (48px, was 64px)
+    height: 48,
+    backgroundColor: 'rgba(107, 127, 71, 0.1)', // Slightly more subtle
+    borderRadius: theme.borderRadius.md,   // Rounded square (12px)
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: theme.spacing.lg,
+    marginRight: theme.spacing.sm,         // Tighter (12px, was 16px)
   },
   rewardIcon: {
-    fontSize: 28,
+    fontSize: theme.typography.sizes.xl,   // Smaller icon (32px, was 40px)
   },
   rewardContent: {
     flex: 1,
+    marginRight: theme.spacing.sm,
   },
   rewardName: {
-    fontSize: theme.typography.md,
-    fontWeight: theme.typography.semibold,
+    ...theme.typography.styles.h5,         // Upgraded from bodyLargeMedium
     color: theme.colors.primary,
+    marginBottom: theme.spacing.xxs,       // Tiny gap before description
   },
   rewardDescription: {
-    fontSize: theme.typography.sm,
+    ...theme.typography.styles.caption,    // Reduced from body
     color: theme.colors.secondary,
-    marginTop: 2,
+    marginTop: 0,                          // Remove conflicting margin
   },
   rewardExpiry: {
-    fontSize: theme.typography.xs,
+    ...theme.typography.styles.caption,
     color: theme.colors.secondary,
-    marginTop: 4,
+    opacity: 0.8,                          // Slightly muted
+    marginTop: theme.spacing.xxs,
   },
   rewardAction: {
-    marginLeft: theme.spacing.sm,
+    marginLeft: 0,                         // Remove extra margin
   },
   redeemButton: {
     backgroundColor: theme.colors.accent,
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.sm,
-    borderRadius: theme.borderRadius.lg,
+    paddingHorizontal: theme.spacing.md,   // Maintained (16px)
+    paddingVertical: theme.spacing.xs,     // Tighter (8px, was 16px)
+    borderRadius: theme.borderRadius.sm,   // Smaller radius (8px)
+    minWidth: 72,                          // Slightly smaller (72px, was 80px)
+    minHeight: 40,                         // Slightly smaller (40px, was 44px)
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   redeemButtonDisabled: {
     backgroundColor: theme.colors.gray100,
   },
   redeemButtonText: {
+    ...theme.typography.styles.buttonSmall, // Reduced from button
     color: theme.colors.white,
-    fontSize: theme.typography.sm,
-    fontWeight: theme.typography.semibold,
   },
 
   // ═══ WAYS TO EARN SECTION ═══
   // Single card containing multiple earning opportunities
   waysToEarnCard: {
     backgroundColor: theme.colors.surface,
-    borderRadius: theme.borderRadius.xxl,
-    overflow: 'hidden', // Ensures content respects rounded corners
+    borderRadius: theme.borderRadius.md,   // More compact (12px, was 24px)
+    overflow: 'hidden',
     ...theme.shadows.soft,
   },
   earnItem: {
-    flexDirection: 'row', // Horizontal: icon | content | points+chevron
+    flexDirection: 'row',
     alignItems: 'center',
-    padding: theme.spacing.lg,
+    paddingVertical: theme.spacing.md,     // Tighter (16px, was 24px)
+    paddingHorizontal: theme.spacing.md,   // Maintained (16px)
+    minHeight: 64,                         // Reduced (64px, was 76px)
   },
   earnItemBorder: {
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.gray100, // Subtle separator between items
+    borderBottomWidth: 0.5,                // Hairline separator (thinner)
+    borderBottomColor: theme.colors.gray200, // Lighter color
   },
   earnIconContainer: {
-    width: 40,
+    width: 40,                             // More compact (40px, was 48px)
     height: 40,
-    backgroundColor: 'rgba(184, 101, 75, 0.15)', // 15% terracotta (differentiates from rewards)
-    borderRadius: theme.borderRadius.round,
+    backgroundColor: 'rgba(184, 101, 75, 0.1)', // More subtle
+    borderRadius: theme.borderRadius.sm,   // Smaller radius (8px)
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: theme.spacing.lg,
+    marginRight: theme.spacing.sm,         // Tighter (12px, was 16px)
   },
   earnContent: {
     flex: 1,
+    marginRight: theme.spacing.sm,
   },
   earnTitle: {
-    fontSize: theme.typography.sm,
-    fontWeight: theme.typography.semibold,
+    ...theme.typography.styles.bodyLargeMedium, // Upgraded
     color: theme.colors.primary,
+    marginBottom: theme.spacing.xxs,       // Tiny gap before description
   },
   earnDescription: {
-    fontSize: theme.typography.xs,
+    ...theme.typography.styles.caption,
     color: theme.colors.secondary,
-    marginTop: 2,
+    marginTop: 0,                          // Remove conflicting margin
   },
   earnAction: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing.sm,
+    gap: theme.spacing.xs,                 // Reduced gap
   },
   earnPoints: {
-    fontSize: theme.typography.sm,
-    fontWeight: theme.typography.bold,
+    ...theme.typography.styles.h6,         // Upgraded from bodyBold
     color: theme.colors.terracotta,
   },
 
@@ -889,115 +870,71 @@ const styles = StyleSheet.create({
   // 2-column grid layout for achievement badges
   badgesGrid: {
     flexDirection: 'row',
-    flexWrap: 'wrap', // Allows items to wrap to next row
-    gap: theme.spacing.md, // Space between badge cards
+    flexWrap: 'wrap',
+    gap: theme.spacing.sm,                 // Maintained at 12px for grid
   },
   badgeCard: {
     backgroundColor: theme.colors.surface,
-    borderRadius: theme.borderRadius.xxl,
-    padding: theme.spacing.lg,
-    // Dynamic width calculation for 2-column grid:
-    // (screen width - horizontal padding on both sides - gap) / 2
-    width: (width - theme.spacing.xl * 2 - theme.spacing.md) / 2,
-    alignItems: 'center', // Centers content horizontally
+    borderRadius: theme.borderRadius.md,   // More compact (12px, was 24px)
+    paddingVertical: theme.spacing.md,     // Tighter (20px, was 32px)
+    paddingHorizontal: theme.spacing.sm,   // Tighter (12px, was 16px)
+    // Percentage-based width accounts for gap
+    width: '48%',
+    minHeight: 140,                        // Reduced (140px, was 160px)
+    alignItems: 'center',
+    justifyContent: 'center',              // Center content vertically too
     ...theme.shadows.soft,
   },
   badgeCardInactive: {
-    opacity: 0.75, // Dims unearned badges to show locked state
+    opacity: 0.6,                          // More pronounced dimming (was 0.75)
   },
   badgeIcon: {
-    fontSize: 40, // Large emoji for visual impact
-    marginBottom: theme.spacing.sm,
+    fontSize: theme.typography.sizes.xxl,  // Smaller (40px, was 48px)
+    marginBottom: theme.spacing.sm,        // Tighter (12px, was 16px)
   },
   badgeIconInactive: {
-    opacity: 0.5, // Further reduces opacity for unearned badge icons
-    // Note: React Native doesn't support CSS filters like grayscale
-    // Opacity reduction provides similar visual distinction
+    opacity: 0.4,                          // More pronounced (was 0.5)
   },
   badgeName: {
-    fontSize: theme.typography.sm,
-    fontWeight: theme.typography.semibold,
+    ...theme.typography.styles.bodyLargeMedium, // Upgraded
     color: theme.colors.primary,
     textAlign: 'center',
-    marginBottom: 4,
+    marginBottom: theme.spacing.xxs,       // Consistent tiny gap
   },
   badgeDescription: {
-    fontSize: theme.typography.xs,
+    ...theme.typography.styles.caption,
     color: theme.colors.secondary,
     textAlign: 'center',
+    lineHeight: theme.typography.sizes.sm, // Better line height for readability
   },
   // Badge progress tracking (for unearned badges)
   badgeProgressContainer: {
     width: '100%',
-    marginTop: theme.spacing.md,
+    marginTop: theme.spacing.sm,           // Tighter (12px, was 16px)
   },
   badgeProgressHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // Spreads fraction and percentage to edges
-    marginBottom: 4,
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing.xxs,       // Reduced from 4
   },
   badgeProgressText: {
-    fontSize: theme.typography.xs,
+    ...theme.typography.styles.finePrint,  // Smaller (was caption)
     color: theme.colors.secondary,
+    opacity: 0.8,
   },
   badgeProgressBarBackground: {
-    height: 6, // Thin but visible progress bar
-    backgroundColor: theme.colors.gray200, // Light gray background
+    height: 4,                             // Thinner (4px, was 8px)
+    backgroundColor: theme.colors.gray200,
     borderRadius: theme.borderRadius.round,
     overflow: 'hidden',
   },
   badgeProgressBarFill: {
     height: '100%',
-    backgroundColor: theme.colors.accent, // Sage green matches brand
+    backgroundColor: theme.colors.accent,
     borderRadius: theme.borderRadius.round,
     // Width dynamically calculated: (progress/total) * 100 + '%'
   },
 
-  // ═══ FLOATING CART SUMMARY ═══
-  // Persistent bottom bar showing cart status
-  floatingCartContainer: {
-    position: 'absolute',
-    bottom: 80, // Positioned above bottom navigation bar
-    left: theme.spacing.lg,
-    right: theme.spacing.lg, // Creates margin on both sides for floating effect
-  },
-  floatingCartButton: {
-    backgroundColor: theme.colors.primary, // Dark background (#1C1C1E)
-    borderRadius: theme.borderRadius.xxl,
-    padding: theme.spacing.lg,
-    flexDirection: 'row', // Horizontal: cart info | CTA
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    ...theme.shadows.float, // Strong shadow creates prominent floating effect
-  },
-  floatingCartContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: theme.spacing.md,
-  },
-  floatingCartIconContainer: {
-    width: 32,
-    height: 32,
-    backgroundColor: theme.colors.whiteTransparent10, // Subtle icon background
-    borderRadius: theme.borderRadius.round,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  floatingCartItems: {
-    color: theme.colors.white, // High contrast on dark background
-    fontSize: theme.typography.sm,
-    fontWeight: theme.typography.semibold,
-  },
-  floatingCartPrice: {
-    color: theme.colors.whiteTransparent70, // Slightly muted for secondary info
-    fontSize: theme.typography.xs,
-  },
-  floatingCartCTA: {
-    color: theme.colors.white,
-    fontSize: theme.typography.sm,
-    fontWeight: theme.typography.semibold,
-    // Arrow (→) provides visual direction cue
-  },
 });
 
 export default RewardsScreen;

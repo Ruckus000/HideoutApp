@@ -75,8 +75,28 @@ export const CartProvider = ({ children }) => {
    *   image?: string,       // Optional product image
    *   description?: string  // Optional product description
    * }
+   *
+   * TEMPORARY: Initialized with test data to verify FloatingCartBar positioning
+   * TODO: Remove test data after layout verification
    */
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState([
+    {
+      id: '1',
+      name: 'Traditional Kava Bowl',
+      price: 8.50,
+      quantity: 2,
+      options: { size: 'Medium', temperature: 'Cold' },
+      cartItemId: 'test-item-1',
+    },
+    {
+      id: '2',
+      name: 'Kava Energy Shot',
+      price: 7.50,
+      quantity: 1,
+      options: { size: 'Small' },
+      cartItemId: 'test-item-2',
+    },
+  ]);
 
   /**
    * Load Cart from AsyncStorage

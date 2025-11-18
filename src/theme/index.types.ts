@@ -3,9 +3,9 @@
  * Exports all theme-related utilities and constants
  */
 
-import { colors } from './colors';
-import { typography } from './typography';
-import { spacing } from './spacing';
+import { colors } from './colors.types';
+import { typography } from './typography.types';
+import { spacing } from './spacing.types';
 
 /**
  * The main theme object for the application.

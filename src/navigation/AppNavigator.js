@@ -20,7 +20,7 @@
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator, BottomTabBar } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -69,11 +69,10 @@ const Stack = createStackNavigator();
  * A badge component that displays the number of items in the cart.
  * It is designed to be placed on top of the cart tab icon.
  *
+ * @param {number} cartCount - The number of items in the cart
  * @returns {JSX.Element|null} The rendered badge component or null if the cart is empty.
  */
-const CartTabBadge = () => {
-  const { cartCount } = useCart();
-
+const CartTabBadge = ({ cartCount }) => {
   // Hide badge when cart is empty to maintain clean UI
   if (cartCount === 0) return null;
 
@@ -83,6 +82,62 @@ const CartTabBadge = () => {
         {/* Cap at 99+ to prevent badge overflow */}
         {cartCount > 99 ? '99+' : cartCount}
       </Text>
+    </View>
+  );
+};
+
+/**
+ * Cart Tab Icon Component
+ *
+ * Renders the cart icon with a badge overlay showing the item count.
+ * This component uses the useCart hook to get the current cart count.
+ *
+ * @param {object} props - The component props
+ * @param {boolean} props.focused - Whether the tab is focused
+ * @param {string} props.color - The icon color
+ * @param {number} props.size - The icon size
+ * @returns {JSX.Element} The rendered cart icon with badge
+ */
+const CartTabIcon = ({ focused, color, size }) => {
+  const { cartCount } = useCart();
+  const iconName = focused ? 'cart' : 'cart-outline';
+
+  return (
+    <View style={styles.iconContainer}>
+      <Ionicons name={iconName} size={size} color={color} />
+      <CartTabBadge cartCount={cartCount} />
+    </View>
+  );
+};
+
+/**
+ * Custom Tab Bar Component
+ *
+ * Renders the integrated cart bar above the default bottom tab bar.
+ * This creates the "cart on nav" appearance seen in apps like Dunkin', Uber Eats, etc.
+ *
+ * Implementation:
+ * - Receives tab bar props from React Navigation
+ * - Renders FloatingCartBar (cart summary) above
+ * - Renders BottomTabBar (navigation tabs) below
+ * - Both components share the same background color for seamless integration
+ *
+ * Design Philosophy:
+ * - Clean component hierarchy (no absolute positioning hacks)
+ * - FloatingCartBar slides up when cart has items
+ * - Tab bar remains fully interactive at all times
+ * - Follows React Navigation's recommended pattern for custom tab bars
+ *
+ * @param {object} props - Tab bar props from React Navigation (state, descriptors, navigation)
+ * @returns {JSX.Element} Custom tab bar with integrated cart summary
+ */
+const CustomTabBar = (props) => {
+  return (
+    <View>
+      {/* Cart summary bar - slides up when cart has items */}
+      <FloatingCartBar />
+      {/* Default tab bar - navigation tabs */}
+      <BottomTabBar {...props} />
     </View>
   );
 };
@@ -114,7 +169,7 @@ const CartTabBadge = () => {
  * - Icon colors controlled by theme: primary.main (warm) for active, textSecondary for inactive
  * - Tab bar styled with surface background and subtle border for depth
  * - Labels use medium font weight (600) for clear hierarchy
- * - Wraps tabs in View container to enable FloatingCartBar positioning
+ * - Custom tabBar prop renders FloatingCartBar above default tab bar
  */
 /**
  * The main bottom tab navigator for the application.
@@ -126,6 +181,7 @@ const BottomTabNavigator = () => {
   return (
     <View style={styles.tabContainer}>
       <Tab.Navigator
+        tabBar={(props) => <CustomTabBar {...props} />}
         screenOptions={({ route }) => ({
           // Hide screen headers - tabs provide primary navigation context
           headerShown: false,
@@ -142,15 +198,17 @@ const BottomTabNavigator = () => {
            * - Unfocused: Outline variant maintains minimal visual weight
            */
           tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
+            // Special handling for Cart tab to include badge
+            if (route.name === 'Cart') {
+              return <CartTabIcon focused={focused} color={color} size={size} />;
+            }
 
-            // Map route names to appropriate Ionicons
+            // Standard icon rendering for other tabs
+            let iconName;
             if (route.name === 'Home') {
               iconName = focused ? 'home' : 'home-outline';
             } else if (route.name === 'Rewards') {
               iconName = focused ? 'gift' : 'gift-outline';
-            } else if (route.name === 'Cart') {
-              iconName = focused ? 'cart' : 'cart-outline';
             } else if (route.name === 'Profile') {
               iconName = focused ? 'person' : 'person-outline';
             }
@@ -168,8 +226,14 @@ const BottomTabNavigator = () => {
            * Design choices:
            * - Surface background maintains consistency with app aesthetic
            * - Subtle border provides visual separation without harsh lines
-           * - 60px height ensures thumb-friendly touch targets (spec 2.4)
+           * - Adaptive height respects device safe areas (home indicator, notches)
            * - No elevation/shadows keeps flat, minimal design
+           *
+           * Safe Area Handling:
+           * - React Navigation automatically adds safe area padding when height is not specified
+           * - On iPhone 14 Pro: base 60px + 34px safe area = 94px total
+           * - On iPhone SE: base 60px + 0px safe area = 60px total
+           * - Tab icons/labels positioned in the safe area automatically
            */
           tabBarActiveTintColor: colors.primary.main,
           tabBarInactiveTintColor: colors.light.textSecondary,
@@ -177,8 +241,6 @@ const BottomTabNavigator = () => {
             backgroundColor: colors.light.surface,
             borderTopColor: colors.light.border,
             borderTopWidth: 1,
-            height: 60,
-            paddingBottom: 8,
             paddingTop: 8,
             elevation: 0, // No shadow on Android - maintains flat aesthetic
             shadowOpacity: 0, // No shadow on iOS - maintains flat aesthetic
@@ -186,6 +248,10 @@ const BottomTabNavigator = () => {
           tabBarLabelStyle: {
             fontSize: 12,
             fontWeight: '600', // Medium weight establishes clear hierarchy
+            marginBottom: 4, // Extra spacing from bottom for better centering
+          },
+          tabBarIconStyle: {
+            marginTop: 4, // Extra spacing from top for better centering
           },
         })}
       >
@@ -230,8 +296,7 @@ const BottomTabNavigator = () => {
           component={CartScreen}
           options={{
             tabBarLabel: 'Cart',
-            tabBarBadge: () => <CartTabBadge />,
-            tabBarBadgeStyle: styles.tabBarBadge, // Transparent to allow custom styling
+            // Badge is now rendered as part of tabBarIcon (CartTabIcon component)
           }}
         />
 
@@ -248,28 +313,6 @@ const BottomTabNavigator = () => {
           }}
         />
       </Tab.Navigator>
-
-      {/*
-        Floating Cart Bar - Persistent Cart Summary
-
-        Spec Reference: ui-ux.md Section 4.2
-        "Position: This component 'floats' persistently at the bottom of the screen.
-        It must be positioned above the 4-icon main tab bar and below the screen's
-        primary content area."
-
-        Integration Strategy:
-        - Rendered inside tabContainer View to enable absolute positioning
-        - FloatingCartBar component handles its own positioning logic
-        - Calculates bottom offset based on tab bar height + safe area insets
-        - Uses z-index to layer above tab bar but below modals
-        - Animates in/out based on cart state (see FloatingCartBar.js for details)
-
-        Why this approach:
-        - Placing it in the tab navigator ensures it's available across all tabs
-        - Absolute positioning allows it to "float" without disrupting screen layouts
-        - Component encapsulation keeps animation/visibility logic self-contained
-      */}
-      <FloatingCartBar />
     </View>
   );
 };
@@ -401,18 +444,31 @@ const styles = StyleSheet.create({
   /**
    * Tab Container
    *
-   * Wrapper for the tab navigator that enables FloatingCartBar positioning.
+   * Wrapper for the tab navigator and integrated cart bar.
    *
-   * Why position: 'relative'?
-   * - Establishes positioning context for absolutely positioned FloatingCartBar
-   * - FloatingCartBar uses absolute positioning with bottom offset
-   * - This allows the cart bar to "float" above tabs without disrupting layout
+   * Layout Strategy:
+   * - flex: 1 fills available screen space
+   * - Column direction (default) stacks Tab.Navigator above FloatingCartBar
+   * - Tab.Navigator gets flex: 1 to fill remaining space
+   * - FloatingCartBar appends to bottom without absolute positioning
    *
-   * flex: 1 ensures container fills available space
+   * This creates a seamless, integrated cart-on-nav appearance matching
+   * modern app patterns (Dunkin', Starbucks, etc.)
    */
   tabContainer: {
     flex: 1,
+  },
+
+  /**
+   * Icon Container
+   *
+   * Container for tab icons that need badge overlays.
+   * Uses relative positioning to enable absolute positioning of badges.
+   */
+  iconContainer: {
     position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   /**
@@ -461,16 +517,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-  /**
-   * Tab Bar Badge Style
-   *
-   * Transparent background allows our custom CartTabBadge component
-   * to handle all styling. React Navigation's default badge is overridden
-   * to give us full design control.
-   */
-  tabBarBadge: {
-    backgroundColor: 'transparent',
-  },
 });
 
 export default AppNavigator;
