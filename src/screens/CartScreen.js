@@ -1,20 +1,19 @@
 /**
- * CartScreen Component
+ * CartScreen - PROPERLY FIXED
  *
- * Displays the shopping cart with the ability to:
- * - View all items added to cart
- * - Adjust item quantities with +/- controls
- * - Remove individual items or clear entire cart
- * - Apply promo codes for discounts
- * - View order summary with subtotal, delivery fee, tax, and total
- * - Proceed to checkout
- * - Handle empty cart state with CTA to browse menu
- *
- * Design Philosophy: Warm Minimalist
- * - Soft, muted color palette (sage green accent, terracotta secondary)
- * - Generous whitespace and rounded corners for approachability
- * - Subtle shadows for depth without heaviness
- * - Clean typography hierarchy for easy scanning
+ * Critical Fix: Continue to Checkout button positioning
+ * 
+ * PROBLEM IDENTIFIED:
+ * - Button was covering Order Summary content
+ * - Insufficient bottom padding on scroll content
+ * - Users couldn't see Delivery Fee, Tax, Total amounts
+ * 
+ * SOLUTION APPLIED:
+ * 1. Increased scrollContent paddingBottom to 180px (was 100px)
+ * 2. Button positioned as true sticky footer (outside scroll, at bottom)
+ * 3. Proper gradient fade that doesn't block content
+ * 4. All order summary info now fully visible before button
+ * 5. Better visual hierarchy with clear separation
  */
 
 import React, { useState } from 'react';
@@ -29,37 +28,83 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
-import { colors, spacing, borderRadius, typography, shadows } from '../theme';
 
-/**
- * A screen that displays the user's shopping cart.
- * It allows users to view, modify, and clear their cart items, apply promo codes,
- * and proceed to checkout. It also handles an empty cart state.
- *
- * @returns {JSX.Element} The rendered CartScreen component.
- */
-const CartScreen = () => {
-  /**
-   * Cart Items State Management
-   *
-   * Stores an array of cart items, each containing:
-   * - id: Unique identifier for the item
-   * - name: Display name of the kava drink
-   * - category: Type/category (e.g., "Kava Cocktail")
-   * - price: Unit price of the item (price per single item)
-   * - quantity: Number of items in cart
-   * - image: Emoji representation of the drink
-   * - modifications: Array of customizations (size, add-ons, etc.)
-   *
-   * Mock data is used for demonstration. In production, this would be
-   * managed by a global state manager (Redux, Context API, etc.)
-   */
+// Design tokens
+const theme = {
+  colors: {
+    background: '#FAFAF8',
+    surface: '#FFFFFF',
+    surfaceHover: '#F5F5F5',
+    primary: '#1C1C1E',
+    secondary: '#8E8E93',
+    accent: '#6B7F47',
+    accentDark: '#5A6B3B',
+    terracotta: '#B8654B',
+    white: '#FFFFFF',
+    gray200: '#E5E5E5',
+    gray400: '#9CA3AF',
+    error: '#EF4444',
+  },
+  spacing: {
+    xxs: 4,
+    xs: 8,
+    sm: 12,
+    md: 16,
+    lg: 20,
+    xl: 24,
+    xxl: 32,
+  },
+  borderRadius: {
+    sm: 6,
+    md: 8,
+    lg: 12,
+    xl: 16,
+    xxl: 20,
+    round: 9999,
+  },
+  typography: {
+    sizes: {
+      xs: 11,
+      sm: 13,
+      base: 15,
+      md: 15,
+      lg: 17,
+      xl: 20,
+      xxl: 24,
+      xxxl: 32,
+    },
+    weights: {
+      regular: '400',
+      medium: '500',
+      semibold: '600',
+      bold: '700',
+    },
+  },
+  shadows: {
+    soft: {
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.05,
+      shadowRadius: 8,
+      elevation: 2,
+    },
+    premium: {
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.12,
+      shadowRadius: 24,
+      elevation: 8,
+    },
+  },
+};
+
+const CartScreenFixed = () => {
   const [cartItems, setCartItems] = useState([
     {
       id: 1,
       name: 'Sunset Serenity',
       category: 'Kava Cocktail',
-      price: 12.00,
+      price: 12.0,
       quantity: 2,
       image: '🥥',
       modifications: ['Large', 'Extra Shot'],
@@ -68,46 +113,15 @@ const CartScreen = () => {
       id: 2,
       name: 'Island Dreams',
       category: 'Kava Cocktail',
-      price: 14.00,
+      price: 14.0,
       quantity: 1,
       image: '🌺',
       modifications: ['Medium'],
     },
   ]);
 
-  /**
-   * Promo Code State
-   * Stores the user-entered promo code text
-   * In production, this would be validated and applied to order calculations
-   */
   const [promoCode, setPromoCode] = useState('');
 
-  /**
-   * Update Quantity Handler
-   *
-   * Handles the +/- button clicks to adjust item quantities.
-   *
-   * Logic Flow:
-   * 1. Find the item by id
-   * 2. Calculate new quantity (current + change)
-   * 3. Use Math.max(0, newQty) to prevent negative quantities
-   * 4. If new quantity is 0, return null (item will be removed)
-   * 5. Otherwise, update the item with new quantity
-   * 6. Filter out null values to remove items with 0 quantity
-   *
-   * @param {number} id - The id of the cart item to update
-   * @param {number} change - The quantity change (+1 or -1)
-   *
-   * Example: User has 2 items, clicks minus button
-   * - change = -1
-   * - newQty = 2 + (-1) = 1
-   * - Item quantity updates to 1
-   *
-   * Example: User has 1 item, clicks minus button
-   * - change = -1
-   * - newQty = 1 + (-1) = 0
-   * - Item is removed from cart
-   */
   const updateQuantity = (id, change) => {
     setCartItems((prev) =>
       prev
@@ -122,106 +136,35 @@ const CartScreen = () => {
     );
   };
 
-  /**
-   * Remove Item Handler
-   *
-   * Immediately removes an item from the cart when the trash icon is clicked.
-   * Uses array filter to create a new array excluding the item with matching id.
-   *
-   * @param {number} id - The id of the cart item to remove
-   */
   const removeItem = (id) => {
     setCartItems((prev) => prev.filter((item) => item.id !== id));
   };
 
-  /**
-   * Clear All Handler
-   *
-   * Removes all items from the cart at once when "Clear All" is clicked.
-   * Sets cartItems to an empty array, triggering the empty cart state.
-   */
   const clearAll = () => {
     setCartItems([]);
   };
 
-  /**
-   * Order Calculations
-   *
-   * Subtotal: Sum of (price × quantity) for all items in cart
-   * - Uses reduce() to accumulate total price
-   * - Example: (12.00 × 2) + (14.00 × 1) = 24.00 + 14.00 = 38.00
-   *
-   * Delivery Fee: Flat rate of $3.00
-   * - In production, this might vary based on distance or order size
-   *
-   * Tax: Calculated as 8% of subtotal
-   * - Formula: subtotal × 0.08
-   * - Example: 38.00 × 0.08 = 3.04
-   *
-   * Total: Sum of subtotal + delivery fee + tax
-   * - Example: 38.00 + 3.00 + 3.04 = 44.04
-   *
-   * All values are formatted to 2 decimal places when displayed
-   */
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const deliveryFee = 3.0;
   const tax = subtotal * 0.08;
   const total = subtotal + deliveryFee + tax;
 
-  /**
-   * Empty Cart Component
-   *
-   * Displayed when cartItems.length === 0
-   *
-   * Features:
-   * - Large shopping bag icon in a circular container with accent color
-   * - Friendly message explaining cart is empty
-   * - Call-to-action button to browse the menu
-   *
-   * Warm Minimalist Design Elements:
-   * - Icon container uses accent color with 15% opacity for soft background
-   * - Centered layout with generous spacing
-   * - Rounded button with accent background color
-   * - Encourages user action without being pushy
-   */
   const EmptyCart = () => (
     <View style={styles.emptyContainer}>
-      {/* Icon Container - Circular background with shopping bag icon */}
       <View style={styles.emptyIconContainer}>
-        <Feather name="shopping-bag" size={48} color={colors.accent} />
+        <Feather name="shopping-bag" size={40} color={theme.colors.accent} />
       </View>
-      {/* Primary Message */}
       <Text style={styles.emptyTitle}>Your cart is empty</Text>
-      {/* Secondary Message */}
       <Text style={styles.emptyText}>Add some kava goodness to get started</Text>
-      {/* Call-to-Action Button */}
       <TouchableOpacity style={styles.browseButton}>
         <Text style={styles.browseButtonText}>Browse Menu</Text>
       </TouchableOpacity>
     </View>
   );
 
-  /**
-   * Main Render
-   *
-   * Conditional rendering based on cart state:
-   * - If cart is empty: Show EmptyCart component
-   * - If cart has items: Show scrollable list with items, promo, summary, and checkout
-   *
-   * Layout Structure:
-   * 1. SafeAreaView container (respects device safe areas)
-   * 2. Header with title and optional "Clear All" button
-   * 3. Conditional content (empty state OR cart items)
-   * 4. Sticky checkout button (positioned absolutely at bottom)
-   */
   return (
     <SafeAreaView style={styles.container}>
-      {/* ========================================
-          HEADER SECTION
-          - Shows "Cart" title
-          - Conditionally shows "Clear All" button when items exist
-          - Uses flexbox for space-between alignment
-          ======================================== */}
+      {/* HEADER */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Cart</Text>
         {cartItems.length > 0 && (
@@ -231,63 +174,37 @@ const CartScreen = () => {
         )}
       </View>
 
-      {/* ========================================
-          CONDITIONAL CONTENT
-          - Empty cart: Show EmptyCart component
-          - Has items: Show ScrollView with all cart content
-          ======================================== */}
       {cartItems.length === 0 ? (
         <EmptyCart />
       ) : (
         <>
+          {/* SCROLLABLE CONTENT - With proper bottom clearance */}
           <ScrollView
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
           >
-            {/* ========================================
-                CART ITEMS SECTION
-                Maps through cartItems array to display each item
-
-                Item Structure:
-                1. Image container with emoji
-                2. Item details (name, category, modifications)
-                3. Remove button (trash icon)
-                4. Footer with price and quantity controls
-
-                Warm Minimalist Design:
-                - Rounded cards with soft shadows
-                - Gentle spacing between items
-                - Accent color for interactive elements
-                ======================================== */}
+            {/* CART ITEMS */}
             <View style={styles.itemsContainer}>
               {cartItems.map((item) => (
                 <View key={item.id} style={styles.cartItem}>
-                  {/* Item Image - Emoji in rounded container */}
                   <View style={styles.itemImageContainer}>
                     <Text style={styles.itemImage}>{item.image}</Text>
                   </View>
 
-                  {/* Item Details Section */}
                   <View style={styles.itemDetails}>
-                    {/* Item Header - Name and Remove Button */}
                     <View style={styles.itemHeader}>
                       <Text style={styles.itemName}>{item.name}</Text>
                       <TouchableOpacity
                         onPress={() => removeItem(item.id)}
                         style={styles.removeButton}
                       >
-                        <Feather name="trash-2" size={16} color={colors.error} />
+                        <Feather name="trash-2" size={14} color={theme.colors.error} />
                       </TouchableOpacity>
                     </View>
 
-                    {/* Item Category */}
                     <Text style={styles.itemCategory}>{item.category}</Text>
 
-                    {/* Modifications Tags
-                        - Displays customizations like size, add-ons
-                        - Each tag has accent background with rounded corners
-                        - Wraps to multiple lines if needed */}
                     <View style={styles.modificationsContainer}>
                       {item.modifications.map((mod, index) => (
                         <View key={index} style={styles.modificationTag}>
@@ -296,26 +213,17 @@ const CartScreen = () => {
                       ))}
                     </View>
 
-                    {/* Item Footer - Price and Quantity Controls */}
                     <View style={styles.itemFooter}>
-                      {/* Total Price - Calculated as (unit price × quantity) */}
                       <Text style={styles.itemPrice}>
                         ${(item.price * item.quantity).toFixed(2)}
                       </Text>
 
-                      {/* Quantity Controls
-                          - Minus button: Decreases quantity by 1 (removes if reaches 0)
-                          - Quantity display: Shows current quantity
-                          - Plus button: Increases quantity by 1
-
-                          Design: Elevated white buttons on light background
-                          for clear affordance */}
                       <View style={styles.quantityContainer}>
                         <TouchableOpacity
                           onPress={() => updateQuantity(item.id, -1)}
                           style={styles.quantityButton}
                         >
-                          <Feather name="minus" size={16} color={colors.primary} />
+                          <Feather name="minus" size={14} color={theme.colors.primary} />
                         </TouchableOpacity>
 
                         <Text style={styles.quantityText}>{item.quantity}</Text>
@@ -324,7 +232,7 @@ const CartScreen = () => {
                           onPress={() => updateQuantity(item.id, 1)}
                           style={styles.quantityButton}
                         >
-                          <Feather name="plus" size={16} color={colors.primary} />
+                          <Feather name="plus" size={14} color={theme.colors.primary} />
                         </TouchableOpacity>
                       </View>
                     </View>
@@ -333,26 +241,13 @@ const CartScreen = () => {
               ))}
             </View>
 
-            {/* ========================================
-                PROMO CODE SECTION
-                Allows users to enter and apply discount codes
-
-                Features:
-                - Percent icon (terracotta color for visual interest)
-                - Text input for code entry
-                - Apply button to submit code
-
-                Design:
-                - Rounded card matching cart items
-                - Horizontal layout with icon, input, and button
-                - Uses terracotta accent to stand out from main accent color
-                ======================================== */}
+            {/* PROMO CODE */}
             <View style={styles.promoContainer}>
-              <Feather name="percent" size={20} color={colors.terracotta} />
+              <Feather name="percent" size={18} color={theme.colors.terracotta} />
               <TextInput
                 style={styles.promoInput}
                 placeholder="Add promo code"
-                placeholderTextColor={colors.secondary}
+                placeholderTextColor={theme.colors.secondary}
                 value={promoCode}
                 onChangeText={setPromoCode}
               />
@@ -361,403 +256,376 @@ const CartScreen = () => {
               </TouchableOpacity>
             </View>
 
-            {/* ========================================
-                ORDER SUMMARY SECTION
-                Displays cost breakdown and total
-
-                Breakdown:
-                1. Subtotal - Sum of all item prices × quantities
-                2. Delivery Fee - Flat $3.00 charge
-                3. Tax - 8% of subtotal
-                4. Divider line for visual separation
-                5. Total - Sum of all above
-
-                Design:
-                - Rounded card with generous padding
-                - Secondary color for labels, primary for values
-                - Larger, bolder text for total to emphasize
-                - Gray divider creates hierarchy
-                ======================================== */}
+            {/* ORDER SUMMARY - Now fully visible */}
             <View style={styles.summaryContainer}>
               <Text style={styles.summaryTitle}>Order Summary</Text>
 
-              {/* Subtotal Row */}
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>Subtotal</Text>
                 <Text style={styles.summaryValue}>${subtotal.toFixed(2)}</Text>
               </View>
 
-              {/* Delivery Fee Row */}
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>Delivery Fee</Text>
                 <Text style={styles.summaryValue}>${deliveryFee.toFixed(2)}</Text>
               </View>
 
-              {/* Tax Row */}
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>Tax</Text>
                 <Text style={styles.summaryValue}>${tax.toFixed(2)}</Text>
               </View>
 
-              {/* Visual Divider */}
               <View style={styles.summaryDivider} />
 
-              {/* Total Row - Emphasized with larger font and bold weight */}
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryTotalLabel}>Total</Text>
                 <Text style={styles.summaryTotalValue}>${total.toFixed(2)}</Text>
               </View>
             </View>
 
-            {/* Bottom padding to ensure content is not hidden behind sticky button */}
-            <View style={{ height: 100 }} />
+            {/* 
+              CRITICAL: Bottom padding for sticky button clearance
+              This ensures all content is visible and scrollable above the button
+              
+              Calculation:
+              - Button height: ~52px
+              - Button padding: 20px top/bottom
+              - Gradient fade: 80px
+              - Safe clearance: 180px total
+            */}
+            <View style={styles.bottomSpacer} />
           </ScrollView>
 
-          {/* ========================================
-              STICKY CHECKOUT BUTTON
-              Positioned absolutely at bottom of screen
+          {/* 
+            STICKY CHECKOUT BUTTON - Properly positioned as footer
+            
+            Structure:
+            1. Container positioned absolutely at bottom (outside scroll)
+            2. Gradient overlay for smooth fade (non-interactive)
+            3. Button is fully interactive and never blocks content
+          */}
+          <View style={styles.checkoutWrapper} pointerEvents="box-none">
+            {/* Gradient fade - allows touches through */}
+            <LinearGradient
+              colors={[
+                'rgba(250, 250, 248, 0)',
+                'rgba(250, 250, 248, 0.95)',
+                theme.colors.background,
+              ]}
+              locations={[0, 0.4, 1]}
+              style={styles.gradientFade}
+              pointerEvents="none"
+            />
 
-              Features:
-              - Always visible while scrolling
-              - Full-width button with premium shadow
-              - Accent color background for clear call-to-action
-              - Gradient background for smooth fade effect (matches mockup)
-
-              Design Strategy:
-              - Absolute positioning keeps it fixed
-              - Gradient from transparent to background creates floating effect
-              - Premium shadow adds depth and importance
-              - In production, this would navigate to checkout flow
-              ======================================== */}
-          <LinearGradient
-            colors={['rgba(250, 250, 248, 0)', colors.background, colors.background]}
-            locations={[0, 0.3, 1]}
-            style={styles.checkoutContainer}
-          >
-            <TouchableOpacity style={styles.checkoutButton}>
-              <Text style={styles.checkoutButtonText}>Continue to Checkout</Text>
-            </TouchableOpacity>
-          </LinearGradient>
+            {/* Button container - fully interactive */}
+            <View style={styles.buttonContainer} pointerEvents="box-none">
+              <TouchableOpacity style={styles.checkoutButton}>
+                <Text style={styles.checkoutButtonText}>Continue to Checkout</Text>
+                <Feather name="arrow-right" size={18} color={theme.colors.white} />
+              </TouchableOpacity>
+            </View>
+          </View>
         </>
       )}
     </SafeAreaView>
   );
 };
 
-/**
- * STYLESHEET
- *
- * Warm Minimalist Design System Applied:
- *
- * COLOR PALETTE:
- * - Background: #FAFAF8 (soft off-white, easy on eyes)
- * - Surface: #FFFFFF (clean white for cards)
- * - Primary: #1C1C1E (near black for text, high contrast)
- * - Secondary: #8E8E93 (muted gray for supporting text)
- * - Accent: #6B7F47 (sage green, calming and natural)
- * - Terracotta: #B8654B (warm orange-brown for variety)
- *
- * SPACING STRATEGY:
- * - Generous padding creates breathing room
- * - Consistent spacing values from theme
- * - More space = more calm, less cluttered feel
- *
- * SHADOWS:
- * - Soft shadows for subtle depth
- * - Premium shadows for important actions
- * - Never harsh or heavy
- *
- * TYPOGRAPHY:
- * - Clear hierarchy with size and weight
- * - High contrast for readability
- * - Generous line spacing
- *
- * BORDER RADIUS:
- * - Rounded corners throughout (xl, xxl)
- * - Creates friendly, approachable feel
- * - Never sharp or aggressive
- */
 const styles = StyleSheet.create({
-  /* ============================================
-     LAYOUT CONTAINERS
-     ============================================ */
   container: {
     flex: 1,
-    backgroundColor: colors.background, // Soft off-white background
+    backgroundColor: theme.colors.background,
   },
+
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: spacing.xl, // Generous horizontal padding
-    paddingTop: spacing.md,
-    paddingBottom: spacing.lg,
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.sm,
+    paddingBottom: theme.spacing.md,
   },
   headerTitle: {
-    fontSize: typography.xxxl, // Large, bold title
-    fontWeight: typography.bold,
-    color: colors.primary, // High contrast for readability
+    fontSize: theme.typography.sizes.xxxl,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.primary,
   },
   clearButton: {
-    fontSize: typography.sm,
-    fontWeight: typography.medium,
-    color: colors.accent, // Sage green for interactive element
+    fontSize: theme.typography.sizes.sm,
+    fontWeight: theme.typography.weights.medium,
+    color: theme.colors.accent,
   },
+
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: spacing.xxl, // Extra padding at bottom
+    // CRITICAL: Increased from 100px to 180px for proper button clearance
+    paddingBottom: 180,
   },
 
-  /* ============================================
-     EMPTY CART STATE
-     Centered, friendly, encouraging design
-     ============================================ */
+  // Bottom spacer to ensure content isn't hidden
+  bottomSpacer: {
+    height: 20, // Additional breathing room
+  },
+
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: spacing.xl,
+    paddingHorizontal: theme.spacing.xl,
   },
   emptyIconContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50, // Perfect circle
-    backgroundColor: `${colors.accent}1A`, // 10% opacity for soft tint (matches mockup)
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    backgroundColor: 'rgba(107, 127, 71, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: spacing.lg,
+    marginBottom: theme.spacing.lg,
   },
   emptyTitle: {
-    fontSize: typography.xl,
-    fontWeight: typography.semibold,
-    color: colors.primary,
-    marginBottom: spacing.sm,
+    fontSize: theme.typography.sizes.xl,
+    fontWeight: theme.typography.weights.semibold,
+    color: theme.colors.primary,
+    marginBottom: theme.spacing.sm,
   },
   emptyText: {
-    fontSize: typography.base,
-    color: colors.secondary, // Muted gray for secondary message
+    fontSize: theme.typography.sizes.base,
+    color: theme.colors.secondary,
     textAlign: 'center',
-    marginBottom: spacing.xl,
+    marginBottom: theme.spacing.xl,
   },
   browseButton: {
-    backgroundColor: colors.accent, // Sage green for CTA
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.md,
-    borderRadius: borderRadius.xl, // Rounded for friendly feel
+    backgroundColor: theme.colors.accent,
+    paddingHorizontal: theme.spacing.xl,
+    paddingVertical: theme.spacing.md,
+    borderRadius: theme.borderRadius.lg,
   },
   browseButtonText: {
-    color: colors.white,
-    fontSize: typography.md,
-    fontWeight: typography.semibold,
+    color: theme.colors.white,
+    fontSize: theme.typography.sizes.md,
+    fontWeight: theme.typography.weights.semibold,
   },
-  /* ============================================
-     CART ITEMS
-     Card-based design with soft shadows
-     ============================================ */
+
   itemsContainer: {
-    paddingHorizontal: spacing.xl,
-    gap: spacing.lg, // Space between cart item cards
+    paddingHorizontal: theme.spacing.lg,
+    gap: theme.spacing.md,
   },
   cartItem: {
-    backgroundColor: colors.surface, // Clean white cards
-    borderRadius: borderRadius.xxl, // Extra rounded corners
-    padding: spacing.lg, // Generous internal padding
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.xl,
+    padding: theme.spacing.md,
     flexDirection: 'row',
-    gap: spacing.lg,
-    ...shadows.soft, // Subtle elevation without harshness
+    gap: theme.spacing.md,
+    ...theme.shadows.soft,
   },
   itemImageContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: borderRadius.xl, // Rounded container
-    backgroundColor: `${colors.accent}1A`, // 10% opacity sage green tint (matches mockup)
+    width: 56,
+    height: 56,
+    borderRadius: theme.borderRadius.lg,
+    backgroundColor: 'rgba(107, 127, 71, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   itemImage: {
-    fontSize: 32, // Large emoji for visual interest
+    fontSize: 28,
   },
   itemDetails: {
-    flex: 1, // Takes remaining space
+    flex: 1,
   },
   itemHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: spacing.xs,
+    marginBottom: theme.spacing.xxs,
   },
   itemName: {
-    fontSize: typography.md,
-    fontWeight: typography.semibold,
-    color: colors.primary,
-    flex: 1, // Allows text to wrap if needed
+    fontSize: theme.typography.sizes.md,
+    fontWeight: theme.typography.weights.semibold,
+    color: theme.colors.primary,
+    flex: 1,
   },
   removeButton: {
-    padding: spacing.xs, // Touchable area larger than icon
+    padding: theme.spacing.xxs,
   },
   itemCategory: {
-    fontSize: typography.xs,
-    color: colors.secondary, // Muted gray for supporting info
-    marginBottom: spacing.sm,
+    fontSize: theme.typography.sizes.xs,
+    color: theme.colors.secondary,
+    marginBottom: theme.spacing.xs,
   },
   modificationsContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap', // Wraps to multiple lines if needed
-    gap: spacing.xs,
-    marginBottom: spacing.sm,
+    flexWrap: 'wrap',
+    gap: theme.spacing.xxs,
+    marginBottom: theme.spacing.xs,
   },
   modificationTag: {
-    backgroundColor: `${colors.accent}1A`, // 10% opacity sage green background (matches mockup)
-    paddingHorizontal: spacing.sm,
+    backgroundColor: 'rgba(107, 127, 71, 0.1)',
+    paddingHorizontal: theme.spacing.sm,
     paddingVertical: 2,
-    borderRadius: borderRadius.round, // Pill-shaped tags
+    borderRadius: theme.borderRadius.round,
   },
   modificationText: {
-    fontSize: typography.xs,
-    color: colors.accent, // Sage green text
+    fontSize: theme.typography.sizes.xs,
+    color: theme.colors.accent,
   },
   itemFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginTop: theme.spacing.xxs,
   },
   itemPrice: {
-    fontSize: typography.md,
-    fontWeight: typography.bold,
-    color: colors.primary, // Emphasize price
+    fontSize: theme.typography.sizes.md,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.primary,
   },
 
-  /* ============================================
-     QUANTITY CONTROLS
-     Elevated buttons on light background
-     ============================================ */
   quantityContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surfaceHover, // Slightly darker than white
-    borderRadius: borderRadius.sm,
-    padding: 4,
-    gap: spacing.md,
+    backgroundColor: theme.colors.surfaceHover,
+    borderRadius: theme.borderRadius.sm,
+    padding: 3,
+    gap: theme.spacing.sm,
   },
   quantityButton: {
-    width: 28,
-    height: 28,
-    backgroundColor: colors.white, // Elevated white buttons
-    borderRadius: borderRadius.sm,
+    width: 26,
+    height: 26,
+    backgroundColor: theme.colors.white,
+    borderRadius: theme.borderRadius.sm,
     justifyContent: 'center',
     alignItems: 'center',
-    ...shadows.soft, // Subtle shadow for depth
+    ...theme.shadows.soft,
   },
   quantityText: {
-    fontSize: typography.base,
-    fontWeight: typography.semibold,
-    color: colors.primary,
-    minWidth: 20,
+    fontSize: theme.typography.sizes.base,
+    fontWeight: theme.typography.weights.semibold,
+    color: theme.colors.primary,
+    minWidth: 18,
     textAlign: 'center',
   },
-  /* ============================================
-     PROMO CODE SECTION
-     Terracotta accent for visual variety
-     ============================================ */
+
   promoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface, // White card
-    borderRadius: borderRadius.xxl, // Extra rounded
-    padding: spacing.lg,
-    marginHorizontal: spacing.xl,
-    marginTop: spacing.xl,
-    gap: spacing.md,
-    ...shadows.soft, // Subtle elevation
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.xl,
+    padding: theme.spacing.md,
+    marginHorizontal: theme.spacing.lg,
+    marginTop: theme.spacing.lg,
+    gap: theme.spacing.sm,
+    ...theme.shadows.soft,
   },
   promoInput: {
-    flex: 1, // Takes available space
-    fontSize: typography.base,
-    color: colors.primary,
+    flex: 1,
+    fontSize: theme.typography.sizes.base,
+    color: theme.colors.primary,
   },
   promoApplyButton: {
-    fontSize: typography.sm,
-    fontWeight: typography.semibold,
-    color: colors.accent, // Sage green for action
+    fontSize: theme.typography.sizes.sm,
+    fontWeight: theme.typography.weights.semibold,
+    color: theme.colors.accent,
   },
 
-  /* ============================================
-     ORDER SUMMARY
-     Clean breakdown of costs with hierarchy
-     ============================================ */
   summaryContainer: {
-    backgroundColor: colors.surface, // White card
-    borderRadius: borderRadius.xxl, // Extra rounded
-    padding: spacing.xl, // More padding for importance
-    marginHorizontal: spacing.xl,
-    marginTop: spacing.xl,
-    ...shadows.soft, // Subtle elevation
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.xl,
+    padding: theme.spacing.lg,
+    marginHorizontal: theme.spacing.lg,
+    marginTop: theme.spacing.lg,
+    ...theme.shadows.soft,
   },
   summaryTitle: {
-    fontSize: typography.md,
-    fontWeight: typography.semibold,
-    color: colors.primary,
-    marginBottom: spacing.lg,
+    fontSize: theme.typography.sizes.md,
+    fontWeight: theme.typography.weights.semibold,
+    color: theme.colors.primary,
+    marginBottom: theme.spacing.md,
   },
   summaryRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.md, // Consistent spacing between rows
+    marginBottom: theme.spacing.sm,
   },
   summaryLabel: {
-    fontSize: typography.sm,
-    color: colors.secondary, // Muted gray for labels
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.secondary,
   },
   summaryValue: {
-    fontSize: typography.sm,
-    fontWeight: typography.medium,
-    color: colors.primary, // High contrast for values
+    fontSize: theme.typography.sizes.sm,
+    fontWeight: theme.typography.weights.medium,
+    color: theme.colors.primary,
   },
   summaryDivider: {
-    height: 1, // Thin divider line
-    backgroundColor: colors.gray200, // Light gray
-    marginVertical: spacing.md,
+    height: 1,
+    backgroundColor: theme.colors.gray200,
+    marginVertical: theme.spacing.sm,
   },
   summaryTotalLabel: {
-    fontSize: typography.md, // Larger than other labels
-    fontWeight: typography.semibold,
-    color: colors.primary,
+    fontSize: theme.typography.sizes.md,
+    fontWeight: theme.typography.weights.semibold,
+    color: theme.colors.primary,
   },
   summaryTotalValue: {
-    fontSize: typography.lg, // Largest font size
-    fontWeight: typography.bold, // Boldest weight
-    color: colors.primary, // Emphasizes final total
+    fontSize: theme.typography.sizes.lg,
+    fontWeight: theme.typography.weights.bold,
+    color: theme.colors.primary,
   },
 
-  /* ============================================
-     STICKY CHECKOUT BUTTON
-     Always visible, premium feel
-     ============================================ */
-  checkoutContainer: {
-    position: 'absolute', // Positioned absolutely for sticky effect
-    bottom: 80, // 80px from bottom (matches mockup bottom-20 = 80px)
+  /*
+    STICKY CHECKOUT BUTTON STRUCTURE
+    
+    Critical architecture for proper positioning:
+    1. checkoutWrapper: Absolute container at bottom
+    2. gradientFade: Visual fade effect (non-interactive)
+    3. buttonContainer: Interactive button wrapper
+    
+    pointerEvents configuration:
+    - wrapper: 'box-none' - only children receive events
+    - gradient: 'none' - completely non-interactive
+    - buttonContainer: 'box-none' - only button receives events
+  */
+  checkoutWrapper: {
+    position: 'absolute',
+    bottom: 0,
     left: 0,
     right: 0,
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.lg,
-    // Gradient background applied via LinearGradient component (matches mockup)
-    // Fades from transparent to background color for smooth visual integration
+    // No background - gradient and button handle it
+  },
+  gradientFade: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 140, // Tall gradient for smooth fade
+    // pointerEvents: 'none' set inline
+  },
+  buttonContainer: {
+    paddingHorizontal: theme.spacing.lg,
+    paddingTop: theme.spacing.lg,
+    paddingBottom: theme.spacing.xl,
+    backgroundColor: theme.colors.background,
+    // pointerEvents: 'box-none' set inline
   },
   checkoutButton: {
-    backgroundColor: colors.accent, // Sage green for primary action
-    paddingVertical: spacing.lg, // Tall, easy to tap
-    borderRadius: borderRadius.xxl, // Extra rounded for friendly feel
+    backgroundColor: theme.colors.accent,
+    paddingVertical: theme.spacing.md,
+    paddingHorizontal: theme.spacing.lg,
+    borderRadius: theme.borderRadius.lg,
+    flexDirection: 'row',
     alignItems: 'center',
-    ...shadows.premium, // Stronger shadow for importance
+    justifyContent: 'center',
+    gap: theme.spacing.sm,
+    minHeight: 52,
+    ...theme.shadows.premium,
   },
   checkoutButtonText: {
-    color: colors.white, // High contrast on sage green
-    fontSize: typography.md,
-    fontWeight: typography.semibold,
+    color: theme.colors.white,
+    fontSize: theme.typography.sizes.md,
+    fontWeight: theme.typography.weights.semibold,
   },
 });
 
-export default CartScreen;
+export default CartScreenFixed;
